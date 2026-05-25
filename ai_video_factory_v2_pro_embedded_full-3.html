@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小天使笑長｜AI影音工廠 v2 PRO 完整嵌入版</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;600;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+:root{--gold:#C9A96E;--gold-l:#F0DEB8;--gold-d:#8B6914;--ink:#1A1208;--ink2:#3D2E0F;--ink3:#6B5230;--cream:#FAF6F0;--card:#FFFDF9;--bg:#F2EBE0;--sage:#7A9E7E;--blush:#D4847A;--border:rgba(201,169,110,0.22);--shadow:0 2px 20px rgba(26,18,8,0.07);--r:14px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;font-size:14px;}
+header{background:var(--ink);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;border-bottom:1px solid var(--gold-d);}
+.logo{font-family:'Noto Serif TC',serif;font-weight:900;font-size:1rem;color:var(--gold);}
+.logo small{display:block;color:rgba(255,255,255,0.5);font-size:0.65rem;font-weight:300;letter-spacing:0.12em;font-family:'Noto Sans TC',sans-serif;}
+.hbadge{background:linear-gradient(135deg,var(--gold),var(--gold-d));color:#fff;font-size:0.65rem;padding:3px 10px;border-radius:12px;}
+.nav{display:flex;gap:4px;padding:14px 16px 0;overflow-x:auto;background:var(--cream);border-bottom:1px solid var(--border);}
+.nav::-webkit-scrollbar{height:2px;}.nav::-webkit-scrollbar-thumb{background:var(--gold);}
+.ntab{flex-shrink:0;padding:8px 14px;border-radius:10px 10px 0 0;border:1.5px solid transparent;background:transparent;color:var(--ink3);font-size:0.78rem;font-family:'Noto Sans TC',sans-serif;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.ntab:hover{color:var(--gold-d);}
+.ntab.on{background:var(--card);border-color:var(--border);color:var(--ink);font-weight:700;}
+.main{max-width:980px;margin:0 auto;padding:20px 16px 80px;}
+.panel{display:none;animation:fi .25s ease;}.panel.on{display:block;}
+@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.stitle{font-family:'Noto Serif TC',serif;font-size:1.2rem;font-weight:900;color:var(--ink);margin-bottom:4px;}
+.stitle span{color:var(--gold);}
+.sdesc{font-size:0.8rem;color:var(--ink3);line-height:1.7;margin-bottom:20px;}
+.card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);margin-bottom:14px;overflow:hidden;box-shadow:var(--shadow);}
+.card-head{padding:11px 16px;background:linear-gradient(135deg,#FAF3E8,var(--cream));border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.card-title{font-family:'Noto Serif TC',serif;font-size:0.85rem;font-weight:700;color:var(--ink);}
+.card-body{padding:16px;}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.fgrid.x1{grid-template-columns:1fr;}.fgrid.x3{grid-template-columns:1fr 1fr 1fr;}
+@media(max-width:560px){.fgrid,.fgrid.x3{grid-template-columns:1fr;}}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:0.7rem;font-weight:700;color:var(--gold-d);letter-spacing:0.1em;text-transform:uppercase;}
+.field select,.field input,.field textarea{padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;background:var(--card);font-family:'Noto Sans TC',sans-serif;font-size:0.83rem;color:var(--ink);outline:none;transition:border-color .2s;}
+.field select:focus,.field input:focus,.field textarea:focus{border-color:var(--gold);}
+.field textarea{resize:vertical;min-height:72px;line-height:1.6;}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px;}
+.chip{padding:5px 12px;border-radius:16px;border:1.5px solid var(--border);background:var(--card);font-size:0.75rem;cursor:pointer;transition:all .18s;color:var(--ink3);user-select:none;}
+.chip:hover{border-color:var(--gold);}.chip.on{background:var(--gold);border-color:var(--gold);color:#fff;font-weight:700;}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;max-height:300px;overflow-y:auto;padding:2px;margin-bottom:14px;}
+.sgrid::-webkit-scrollbar{width:3px;}.sgrid::-webkit-scrollbar-thumb{background:var(--gold-l);}
+.scard{padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;background:var(--card);cursor:pointer;transition:all .18s;position:relative;}
+.scard:hover{border-color:var(--gold);}.scard.on{border-color:var(--gold);background:linear-gradient(135deg,#FFFDF9,#FDF5E6);}
+.scard.on::after{content:'✓';position:absolute;top:6px;right:8px;color:var(--gold);font-weight:700;font-size:0.8rem;}
+.scard-num{font-size:0.62rem;color:var(--gold);font-weight:700;margin-bottom:2px;}
+.scard-title{font-size:0.78rem;font-weight:500;color:var(--ink);line-height:1.35;}
+.scard-tag{font-size:0.65rem;color:var(--ink3);margin-top:3px;opacity:.7;}
+.igrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;max-height:240px;overflow-y:auto;padding:2px;margin-bottom:14px;}
+.icard{padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;background:var(--card);cursor:pointer;transition:all .18s;}
+.icard:hover{border-color:var(--sage);}.icard.on{border-color:var(--sage);background:#F0F7F1;}
+.icard-code{font-size:0.62rem;color:var(--sage);font-weight:700;margin-bottom:2px;}
+.icard-title{font-size:0.78rem;color:var(--ink);line-height:1.35;}
+.gbtn{width:100%;padding:13px;background:linear-gradient(135deg,var(--ink),#2D1E08);color:var(--gold);border:none;border-radius:11px;font-family:'Noto Serif TC',serif;font-size:0.95rem;font-weight:700;letter-spacing:0.08em;cursor:pointer;transition:all .22s;margin-top:6px;}
+.gbtn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(26,18,8,.22);}
+.out{margin-top:20px;display:none;}.out.on{display:block;}
+.out-box{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);margin-bottom:12px;overflow:hidden;}
+.out-head{padding:10px 16px;background:linear-gradient(135deg,#FAF3E8,var(--cream));border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.out-title{font-family:'Noto Serif TC',serif;font-size:0.83rem;font-weight:700;color:var(--ink);}
+.cbtn{padding:3px 10px;border:1px solid var(--gold);border-radius:10px;background:transparent;color:var(--gold-d);font-size:0.68rem;cursor:pointer;transition:all .18s;font-family:'Noto Sans TC',sans-serif;}
+.cbtn:hover{background:var(--gold);color:#fff;}.cbtn.done{background:var(--sage);border-color:var(--sage);color:#fff;}
+.out-content{padding:16px;font-size:0.83rem;line-height:1.9;color:var(--ink2);white-space:pre-wrap;}
+.nb{background:linear-gradient(135deg,#EEF3FF,#E8EFFF);border:1.5px solid #B5C8E8;border-radius:11px;padding:13px 16px;margin-top:10px;}
+.nb-label{font-size:0.68rem;font-weight:700;color:#4060A0;letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px;}
+.nb-content{font-size:0.8rem;line-height:1.8;color:#2D3F60;white-space:pre-wrap;}
+.sh{background:linear-gradient(135deg,#EDFDF0,#E4FAE8);border:1.5px solid #A8D8B0;border-radius:11px;padding:13px 16px;margin-top:10px;}
+.sh-label{font-size:0.68rem;font-weight:700;color:#2E7A3C;letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px;}
+.sh-content{font-size:0.78rem;line-height:1.8;color:#1A4D24;white-space:pre-wrap;font-family:monospace;}
+.cc{background:linear-gradient(135deg,#1A1208,#2D1E08);border:1.5px solid var(--gold-d);border-radius:11px;padding:13px 16px;margin-top:10px;}
+.cc-label{font-size:0.68rem;font-weight:700;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px;}
+.cc-content{font-size:0.78rem;line-height:1.8;color:#E8D5A8;white-space:pre-wrap;font-family:monospace;}
+.hatch-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+@media(max-width:480px){.hatch-grid{grid-template-columns:1fr;}}
+.hcard{padding:13px 15px;border:1.5px solid var(--border);border-radius:10px;background:var(--card);cursor:pointer;transition:all .2s;}
+.hcard:hover{border-color:var(--gold);transform:translateY(-1px);}.hcard.on{border-color:var(--gold);background:#FDF8EE;}
+.hcard-icon{font-size:1.4rem;margin-bottom:6px;}.hcard-title{font-size:0.83rem;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.hcard-desc{font-size:0.72rem;color:var(--ink3);line-height:1.5;}
+.prow{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;}
+.pchip{padding:6px 14px;border-radius:18px;border:1.5px solid var(--border);background:var(--card);font-size:0.78rem;cursor:pointer;transition:all .18s;color:var(--ink3);}
+.pchip.yt.on{background:#FF0000;border-color:#FF0000;color:#fff;}
+.pchip.fb.on{background:#1877F2;border-color:#1877F2;color:#fff;}
+.pchip.ig.on{background:#E1306C;border-color:#E1306C;color:#fff;}
+.pchip.tt.on{background:#000;border-color:#000;color:#fff;}
+.tc{padding:4px 11px;border-radius:14px;font-size:0.72rem;font-weight:500;border:1px solid;}
+.tc.main{background:#FDF0DC;border-color:var(--gold);color:var(--gold-d);}
+.tc.sub{background:#F0F7F0;border-color:var(--sage);color:#2E6B36;}
+.tcs{display:flex;flex-wrap:wrap;gap:7px;padding:12px 14px;}
+.div{height:1px;background:var(--border);margin:18px 0;}
+.qnote-area{display:flex;gap:8px;margin-bottom:14px;}
+.qnote-area textarea{flex:1;padding:10px 13px;border:1.5px solid var(--border);border-radius:10px;background:var(--card);font-family:'Noto Sans TC',sans-serif;font-size:0.83rem;color:var(--ink);outline:none;resize:none;height:70px;transition:border-color .2s;}
+.qnote-area textarea:focus{border-color:var(--gold);}
+.qnote-area .gbtn{width:80px;height:70px;padding:8px;font-size:0.75rem;}
+.notes-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;max-height:200px;overflow-y:auto;}
+.note-item{padding:10px 14px;background:var(--card);border:1.5px solid var(--border);border-radius:9px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.note-text{font-size:0.8rem;line-height:1.6;color:var(--ink2);flex:1;}
+.note-meta{font-size:0.65rem;color:var(--gold);white-space:nowrap;}
+.note-del{font-size:0.7rem;color:var(--blush);cursor:pointer;padding:2px 6px;border-radius:6px;border:1px solid var(--blush);background:transparent;flex-shrink:0;}
+.style-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:14px;}
+.style-card{padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;background:var(--card);cursor:pointer;transition:all .18s;text-align:center;}
+.style-card:hover{border-color:var(--gold);}.style-card.on{border-color:var(--gold);background:#FDF8EE;}
+.style-card-icon{font-size:1.4rem;margin-bottom:5px;}.style-card-name{font-size:0.75rem;font-weight:700;color:var(--ink);margin-bottom:2px;}
+.style-card-desc{font-size:0.65rem;color:var(--ink3);}
+.badge{padding:3px 9px;border-radius:10px;font-size:0.68rem;font-weight:700;letter-spacing:.06em;}
+.badge.gold{background:#FDF0DC;color:var(--gold-d);border:1px solid var(--gold-l);}
+.badge.green{background:#E8F5EA;color:#2E7A3C;border:1px solid #A8D8B0;}
+.badge.blue{background:#EEF3FF;color:#4060A0;border:1px solid #B5C8E8;}
+.tool-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;max-height:260px;overflow-y:auto;}
+.tool-card{padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;background:var(--card);}
+.tool-card a{color:var(--gold-d);font-weight:700;text-decoration:none;}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">小天使笑長<small>AI 影音工廠 · PRO 完整資料嵌入版</small></div>
+  <div class="hbadge">47故事｜100金句｜36解碼｜12工具</div>
+</header>
+<div class="nav">
+  <button class="ntab on" onclick="sw('p1',this)">📦 素材區</button>
+  <button class="ntab" onclick="sw('p2',this)">🌱 孵化區</button>
+  <button class="ntab" onclick="sw('p3',this)">⚡ 生成區</button>
+  <button class="ntab" onclick="sw('p4',this)">🎨 繪圖指令</button>
+  <button class="ntab" onclick="sw('p5',this)">📋 回填區</button>
+  <button class="ntab" onclick="sw('p6',this)">🚀 發布指令</button>
+</div>
+<div class="main">
+
+<div class="panel on" id="p1">
+  <div class="stitle">📦 素材區｜<span>完整資料核心</span></div>
+  <div class="sdesc">已嵌入完整 stories_db、insight_library、emotion/relation/parenting_decode、tools_db。</div>
+  <div class="card">
+    <div class="card-head"><div class="card-title">✏️ 臨時感悟快速記錄</div></div>
+    <div class="card-body">
+      <div class="chips" id="note_chips">
+        <div class="chip on" onclick="tchip(this)">💡 生活觀察</div>
+        <div class="chip" onclick="tchip(this)">😤 情緒現場</div>
+        <div class="chip" onclick="tchip(this)">🧠 腦科學靈感</div>
+        <div class="chip" onclick="tchip(this)">💬 孩子說的話</div>
+        <div class="chip" onclick="tchip(this)">🌀 教養反思</div>
+        <div class="chip" onclick="tchip(this)">🎯 工具構想</div>
+      </div>
+      <div class="qnote-area">
+        <textarea id="qnote" placeholder="隨手記下這一刻的感悟、故事、觀察…"></textarea>
+        <button class="gbtn" onclick="saveNote()">存入<br>素材庫</button>
+      </div>
+      <div class="notes-list" id="notes_list"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">📖 故事庫（47個）</div>
+      <div style="display:flex;gap:6px;"><span class="badge gold">家庭篇</span><span class="badge green">校園篇</span><span class="badge blue">創作篇</span></div>
+    </div>
+    <div class="card-body">
+      <div class="field" style="margin-bottom:10px;"><input type="text" id="story_search" placeholder="搜尋故事、金句、腦科學、標籤…" oninput="filterStories()"></div>
+      <div class="sgrid" id="p1_sg"></div>
+      <div id="story_preview" style="display:none;" class="nb"><div class="nb-label">📖 故事詳情</div><div class="nb-content" id="story_preview_content"></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><div class="card-title">🧠 解碼庫（36個）</div></div>
+    <div class="card-body">
+      <div class="chips" id="decode_tab">
+        <div class="chip on" onclick="switchDecode('emotion',this)">情緒解碼 12</div>
+        <div class="chip" onclick="switchDecode('relation',this)">人際解碼 12</div>
+        <div class="chip" onclick="switchDecode('parenting',this)">教養解碼 12</div>
+      </div>
+      <div class="igrid" id="decode_grid"></div>
+      <div id="decode_preview" style="display:none;" class="nb"><div class="nb-label">🧠 解碼詳情</div><div class="nb-content" id="decode_preview_content"></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><div class="card-title">💫 療癒金句庫（100個）</div></div>
+    <div class="card-body">
+      <div class="chips" id="insight_filter">
+        <div class="chip on" onclick="filterInsight('all',this)">全部</div>
+        <div class="chip" onclick="filterInsight('跟自己的關係',this)">跟自己</div>
+        <div class="chip" onclick="filterInsight('跟人的關係',this)">跟人</div>
+        <div class="chip" onclick="filterInsight('跟事的關係',this)">跟事</div>
+        <div class="chip" onclick="filterInsight('跟環境的關係',this)">跟環境</div>
+      </div>
+      <div class="igrid" id="insight_grid"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><div class="card-title">🛠 工具庫（12個）</div></div>
+    <div class="card-body"><div class="tool-list" id="tool_grid"></div></div>
+  </div>
+</div>
+
+<div class="panel" id="p2">
+  <div class="stitle">🌱 孵化區｜<span>雙向孵化配對</span></div>
+  <div class="sdesc">正向：素材→工具構想。反向：工具→最佳素材。現在會讀取完整47故事、100金句、36解碼、12工具。</div>
+  <div class="hatch-grid">
+    <div class="hcard on" id="hfw" onclick="switchHatch('fw')"><div class="hcard-icon">➡️</div><div class="hcard-title">正向孵化</div><div class="hcard-desc">素材→工具構想<br>從故事/感悟孵化新工具</div></div>
+    <div class="hcard" id="hbw" onclick="switchHatch('bw')"><div class="hcard-icon">⬅️</div><div class="hcard-title">反向孵化</div><div class="hcard-desc">工具→素材配對<br>現有工具找最佳素材</div></div>
+  </div>
+  <div id="hfw_panel">
+    <div class="card">
+      <div class="card-head"><div class="card-title">➡️ 正向孵化：素材 → 工具構想</div></div>
+      <div class="card-body">
+        <div class="field fgrid x1"><div class="field"><label>輸入生活觀察或感悟</label><textarea id="fw_input" placeholder="例：孩子因為被比較而大哭，我突然發現大人自己也很怕被比較…"></textarea></div></div>
+        <span style="font-size:0.72rem;font-weight:700;color:var(--gold-d);display:block;margin-bottom:8px;">或選擇故事素材</span>
+        <div class="sgrid" id="fw_sg"></div>
+        <button class="gbtn" onclick="runHatch('fw')">🌱 正向孵化：分析缺口＋產出工具構想提示詞</button>
+        <div class="out" id="fw_out">
+          <div class="out-box"><div class="out-head"><div class="out-title">🔍 素材分析提示詞</div><button class="cbtn" onclick="cp('fw_p1')">複製</button></div><div class="out-content" id="fw_p1"></div></div>
+          <div class="out-box"><div class="out-head"><div class="out-title">🛠️ 工具孵化提示詞</div><button class="cbtn" onclick="cp('fw_p2')">複製</button></div><div class="out-content" id="fw_p2"></div></div>
+          <div class="nb"><div class="nb-label">📒 NotebookLM 協作指令</div><div class="nb-content" id="fw_nb"></div></div>
+          <div class="sh"><div class="sh-label">📊 tools_db 回填欄位格式</div><div class="sh-content" id="fw_sh"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="hbw_panel" style="display:none;">
+    <div class="card">
+      <div class="card-head"><div class="card-title">⬅️ 反向孵化：工具 → 素材配對</div></div>
+      <div class="card-body">
+        <div class="fgrid">
+          <div class="field"><label>選擇現有工具</label><select id="bw_tool"></select></div>
+          <div class="field"><label>孵化目標</label><select id="bw_goal"><option>找最佳導流故事（影片素材）</option><option>找最佳金句（Shorts文案）</option><option>找最佳腦科學解碼搭配</option><option>規劃整套內容矩陣</option></select></div>
+        </div>
+        <button class="gbtn" onclick="runHatch('bw')">⬅️ 反向孵化：找最佳素材配對提示詞</button>
+        <div class="out" id="bw_out">
+          <div class="out-box"><div class="out-head"><div class="out-title">🎯 素材配對提示詞</div><button class="cbtn" onclick="cp('bw_p1')">複製</button></div><div class="out-content" id="bw_p1"></div></div>
+          <div class="out-box"><div class="out-head"><div class="out-title">📅 內容矩陣提示詞</div><button class="cbtn" onclick="cp('bw_p2')">複製</button></div><div class="out-content" id="bw_p2"></div></div>
+          <div class="nb"><div class="nb-label">📒 NotebookLM 協作指令</div><div class="nb-content" id="bw_nb"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="p3">
+  <div class="stitle">⚡ 生成區｜<span>五大任務提示詞</span></div>
+  <div class="sdesc">選好素材，產出完整提示詞，複製貼到 Claude 即可生成內容。</div>
+  <div class="chips" id="task_tabs">
+    <div class="chip on" onclick="switchTask('t1',this)">一｜素材串接</div>
+    <div class="chip" onclick="switchTask('t2',this)">二｜長片腳本</div>
+    <div class="chip" onclick="switchTask('t3',this)">三｜Shorts矩陣</div>
+    <div class="chip" onclick="switchTask('t4',this)">四｜多平台發文</div>
+    <div class="chip" onclick="switchTask('t5',this)">五｜課程開發</div>
+  </div>
+
+  <div id="tt1">
+    <div class="card"><div class="card-head"><div class="card-title">📦 任務一｜素材串接</div></div><div class="card-body">
+      <div class="fgrid">
+        <div class="field"><label>情境類型</label><select id="t1_sc"><option>情緒爆炸</option><option>親子衝突</option><option>拖延責任感</option><option>成績焦慮</option><option>自信不足</option><option>手足關係</option><option>同儕壓力</option><option>自主學習</option><option>家庭情緒氛圍</option><option>挫折復原</option></select></div>
+        <div class="field"><label>週次主題</label><select id="t1_wt"><option>週二｜人生感悟</option><option>週四｜腦神經科學×生活理解</option><option>週六｜幸福教養故事</option></select></div>
+      </div>
+      <span style="font-size:.7rem;font-weight:700;color:var(--gold-d);display:block;margin-bottom:8px;">選擇故事素材</span><div class="sgrid" id="t1_sg"></div>
+      <span style="font-size:.7rem;font-weight:700;color:var(--gold-d);display:block;margin-bottom:8px;">切入角度</span>
+      <div class="chips"><div class="chip on" onclick="tchip(this)">🎭 完整故事</div><div class="chip" onclick="tchip(this)">💬 金句衝擊</div><div class="chip" onclick="tchip(this)">🧠 腦科學</div><div class="chip" onclick="tchip(this)">💡 心理學</div><div class="chip" onclick="tchip(this)">🌀 大人反思</div><div class="chip" onclick="tchip(this)">🎯 場景代入</div></div>
+      <button class="gbtn" onclick="genP('t1')">⚡ 產出提示詞 → 複製貼到 Claude</button>
+      <div class="out" id="t1_out"><div class="out-box"><div class="out-head"><div class="out-title">📋 Claude 提示詞</div><button class="cbtn" onclick="cp('t1_p')">一鍵複製</button></div><div class="out-content" id="t1_p"></div></div><div class="nb"><div class="nb-label">📒 NotebookLM 協作指令</div><div class="nb-content" id="t1_nb"></div></div><div class="out-box" style="margin-top:10px;"><div class="out-head"><div class="out-title">🛠️ 推薦導流工具</div></div><div class="tcs" id="t1_tools"></div></div><div class="sh"><div class="sh-label">📊 weekly_plan 回填格式</div><div class="sh-content" id="t1_sh"></div></div></div>
+    </div></div>
+  </div>
+
+  <div id="tt2" style="display:none;">
+    <div class="card"><div class="card-head"><div class="card-title">🎬 任務二｜長片腳本</div></div><div class="card-body">
+      <div class="fgrid"><div class="field"><label>週次</label><input type="text" id="t2_wk" placeholder="例：W01"></div><div class="field"><label>影片類型</label><select id="t2_tp"><option>週二｜人生感悟（3-5分鐘）</option><option>週四｜腦科學×生活（5-8分鐘）</option><option>週六｜教養故事（5-8分鐘）</option></select></div></div>
+      <div class="sgrid" id="t2_sg"></div>
+      <div class="fgrid"><div class="field"><label>核心訊息</label><input type="text" id="t2_core" placeholder="一句話說明這支影片的精髓"></div><div class="field"><label>導流工具</label><select id="t2_tool"></select></div></div>
+      <button class="gbtn" onclick="genP('t2')">🎬 產出長片腳本提示詞</button>
+      <div class="out" id="t2_out"><div class="out-box"><div class="out-head"><div class="out-title">📝 腳本提示詞</div><button class="cbtn" onclick="cp('t2_p')">複製</button></div><div class="out-content" id="t2_p"></div></div><div class="out-box"><div class="out-head"><div class="out-title">🏷️ 標題說明標籤提示詞</div><button class="cbtn" onclick="cp('t2_m')">複製</button></div><div class="out-content" id="t2_m"></div></div><div class="nb"><div class="nb-label">📒 NotebookLM 協作指令</div><div class="nb-content" id="t2_nb"></div></div><div class="sh"><div class="sh-label">📊 long_video 回填格式</div><div class="sh-content" id="t2_sh"></div></div></div>
+    </div></div>
+  </div>
+
+  <div id="tt3" style="display:none;">
+    <div class="card"><div class="card-head"><div class="card-title">⚡ 任務三｜Shorts矩陣</div></div><div class="card-body">
+      <div class="fgrid"><div class="field"><label>對應長片ID</label><input type="text" id="t3_lid" placeholder="例：W01-L01"></div><div class="field"><label>導流工具</label><select id="t3_tool"></select></div></div>
+      <div class="sgrid" id="t3_sg"></div>
+      <button class="gbtn" onclick="genP('t3')">⚡ 產出Shorts矩陣提示詞</button>
+      <div class="out" id="t3_out"><div class="out-box"><div class="out-head"><div class="out-title">📱 Shorts三版本提示詞</div><button class="cbtn" onclick="cp('t3_p')">複製</button></div><div class="out-content" id="t3_p"></div></div><div class="nb"><div class="nb-label">📒 NotebookLM 協作指令</div><div class="nb-content" id="t3_nb"></div></div><div class="sh"><div class="sh-label">📊 shorts 回填格式</div><div class="sh-content" id="t3_sh"></div></div></div>
+    </div></div>
+  </div>
+
+  <div id="tt4" style="display:none;">
+    <div class="card"><div class="card-head"><div class="card-title">📣 任務四｜多平台發文</div></div><div class="card-body">
+      <div class="field fgrid x1"><div class="field"><label>內容摘要</label><textarea id="t4_sum" placeholder="貼入影片摘要或核心金句…"></textarea></div></div>
+      <div class="prow"><div class="pchip yt on" onclick="tplat(this)">YouTube</div><div class="pchip fb on" onclick="tplat(this)">Facebook</div><div class="pchip ig on" onclick="tplat(this)">Instagram</div><div class="pchip tt" onclick="tplat(this)">TikTok</div></div>
+      <div class="fgrid"><div class="field"><label>導流工具</label><select id="t4_tool"></select></div><div class="field"><label>情緒調性</label><select id="t4_tone"><option>溫暖陪伴型</option><option>知識啟發型</option><option>情緒共鳴型</option><option>幽默輕鬆型</option></select></div></div>
+      <button class="gbtn" onclick="genP('t4')">📣 產出多平台發文提示詞</button>
+      <div class="out" id="t4_out"><div class="out-box"><div class="out-head"><div class="out-title">📣 發文提示詞</div><button class="cbtn" onclick="cp('t4_p')">複製</button></div><div class="out-content" id="t4_p"></div></div><div class="nb"><div class="nb-label">📒 NotebookLM 協作指令</div><div class="nb-content" id="t4_nb"></div></div><div class="sh"><div class="sh-label">📊 publish_content 回填格式</div><div class="sh-content" id="t4_sh"></div></div></div>
+    </div></div>
+  </div>
+
+  <div id="tt5" style="display:none;">
+    <div class="card"><div class="card-head"><div class="card-title">🎓 任務五｜課程開發</div></div><div class="card-body">
+      <div class="fgrid"><div class="field"><label>課程類型</label><select id="t5_tp"><option>12週系列課程</option><option>單次工作坊（2小時）</option><option>講題開發（一場演講）</option><option>線上課程模組</option></select></div><div class="field"><label>目標受眾</label><select id="t5_au"><option>家長（親職教育）</option><option>教師（班級經營）</option><option>親師共同</option><option>企業（情緒管理）</option></select></div></div>
+      <div class="sgrid" id="t5_sg"></div>
+      <div class="field fgrid x1"><div class="field"><label>課程核心目標</label><input type="text" id="t5_goal" placeholder="例：讓家長學會先穩住自己的情緒，再引導孩子"></div></div>
+      <button class="gbtn" onclick="genP('t5')">🎓 產出課程規劃提示詞</button>
+      <div class="out" id="t5_out"><div class="out-box"><div class="out-head"><div class="out-title">📋 課程規劃提示詞</div><button class="cbtn" onclick="cp('t5_p')">複製</button></div><div class="out-content" id="t5_p"></div></div><div class="nb"><div class="nb-label">📒 NotebookLM 協作指令</div><div class="nb-content" id="t5_nb"></div></div><div class="sh"><div class="sh-label">📊 course_db 回填格式</div><div class="sh-content" id="t5_sh"></div></div></div>
+    </div></div>
+  </div>
+</div>
+
+<div class="panel" id="p4">
+  <div class="stitle">🎨 繪圖指令｜<span>DALL-E 完整指令產生器</span></div>
+  <div class="sdesc">依內容類型自動切換風格，產出可直接貼入 ChatGPT 的畫圖指令。</div>
+  <div class="card"><div class="card-head"><div class="card-title">🎨 視覺風格</div></div><div class="card-body"><div class="style-grid">
+    <div class="style-card on" onclick="selSty(this,'watercolor_relax')"><div class="style-card-icon">🌊</div><div class="style-card-name">舒壓水彩風</div><div class="style-card-desc">週二人生感悟</div></div>
+    <div class="style-card" onclick="selSty(this,'tech_line')"><div class="style-card-icon">⚡</div><div class="style-card-name">簡約科技風</div><div class="style-card-desc">週四腦科學</div></div>
+    <div class="style-card" onclick="selSty(this,'warm_book')"><div class="style-card-icon">📖</div><div class="style-card-name">水彩童書風</div><div class="style-card-desc">週六教養故事</div></div>
+    <div class="style-card" onclick="selSty(this,'minimal_quote')"><div class="style-card-icon">💬</div><div class="style-card-name">極簡排版風</div><div class="style-card-desc">金句圖卡</div></div>
+    <div class="style-card" onclick="selSty(this,'impact_thumb')"><div class="style-card-icon">🔥</div><div class="style-card-name">高對比衝擊風</div><div class="style-card-desc">YouTube縮圖</div></div>
+    <div class="style-card" onclick="selSty(this,'brand_warm')"><div class="style-card-icon">✨</div><div class="style-card-name">品牌暖金風</div><div class="style-card-desc">品牌問候圖</div></div>
+  </div></div></div>
+  <div class="card"><div class="card-head"><div class="card-title">🖼️ 圖片類型（可多選）</div></div><div class="card-body"><div class="chips" id="img_types"><div class="chip on" onclick="tchip(this)">故事場景插畫（影片用）</div><div class="chip" onclick="tchip(this)">片頭／片尾圖卡</div><div class="chip" onclick="tchip(this)">金句圖卡（IG用）</div><div class="chip" onclick="tchip(this)">YouTube縮圖</div><div class="chip" onclick="tchip(this)">品牌問候分享圖</div></div></div></div>
+  <div class="card"><div class="card-head"><div class="card-title">📝 場景與內容</div></div><div class="card-body">
+    <div class="fgrid"><div class="field"><label>快速選故事</label><select id="img_sel" onchange="fillImg()"><option value="">— 選擇故事 —</option></select></div><div class="field"><label>畫面比例</label><select id="img_ratio"><option value="16:9">16:9 橫式（影片）</option><option value="9:16">9:16 直式（Shorts）</option><option value="1:1">1:1 正方形（IG）</option><option value="1.91:1">1.91:1（封面）</option></select></div></div>
+    <div class="field fgrid x1"><div class="field"><label>場景描述</label><textarea id="img_scene" placeholder="例：媽媽蹲下來和哭泣的孩子說話，窗邊有溫暖的陽光，家裡客廳…"></textarea></div></div>
+    <div class="field fgrid x1"><div class="field"><label>主題金句（圖卡用）</label><input type="text" id="img_quote" placeholder="例：地獄不住快樂的人"></div></div>
+    <button class="gbtn" onclick="genImg()">🎨 產出 DALL-E 完整指令包</button>
+    <div class="out" id="img_out"><div class="out-box"><div class="out-head"><div class="out-title">🎨 DALL-E 指令（貼入 ChatGPT）</div><button class="cbtn" onclick="cp('img_p')">複製全部</button></div><div class="out-content" id="img_p"></div></div><div class="nb"><div class="nb-label">💡 使用說明</div><div class="nb-content">1. 複製上方指令\n2. 開啟 ChatGPT\n3. 貼入指令並生成\n4. 下載圖片\n5. 放入開拍或 Canva</div></div></div>
+  </div></div>
+</div>
+
+<div class="panel" id="p5">
+  <div class="stitle">📋 回填區｜<span>試算表格式輸出</span></div>
+  <div class="sdesc">把 Claude 產出的內容整理成可直接貼回 Google Sheets 的格式。</div>
+  <div class="card"><div class="card-head"><div class="card-title">📊 選擇要回填的分頁</div></div><div class="card-body"><div class="chips" id="sheet_tabs">
+    <div class="chip on" onclick="switchSheet('stories_db',this)">stories_db</div><div class="chip" onclick="switchSheet('insight_library',this)">insight_library</div><div class="chip" onclick="switchSheet('weekly_plan',this)">weekly_plan</div><div class="chip" onclick="switchSheet('long_video',this)">long_video</div><div class="chip" onclick="switchSheet('shorts',this)">shorts</div><div class="chip" onclick="switchSheet('publish_content',this)">publish_content</div><div class="chip" onclick="switchSheet('tools_db',this)">tools_db</div><div class="chip" onclick="switchSheet('course_db',this)">course_db</div><div class="chip" onclick="switchSheet('knowledge_draft',this)">knowledge_draft</div>
+  </div></div></div>
+  <div class="card"><div class="card-head"><div class="card-title">📝 貼入 Claude 產出的內容</div></div><div class="card-body">
+    <div class="field fgrid x1"><div class="field"><label>Claude 產出內容（貼入這裡）</label><textarea id="fill_in" style="min-height:120px;" placeholder="把 Claude 回覆的內容貼入這裡…"></textarea></div></div>
+    <button class="gbtn" onclick="genFill()">📋 轉換成試算表格式</button>
+    <div class="out" id="fill_out"><div class="out-box"><div class="out-head"><div class="out-title">📊 試算表格式（可直接貼上）</div><button class="cbtn" onclick="cp('fill_r')">複製</button></div><div class="out-content" id="fill_r"></div></div><div class="nb"><div class="nb-label">📌 貼回試算表步驟</div><div class="nb-content" id="fill_steps"></div></div></div>
+  </div></div>
+</div>
+
+<div class="panel" id="p6">
+  <div class="stitle">🚀 發布指令｜<span>Claude Code 自動發布</span></div>
+  <div class="sdesc">產出可交給 Claude Code 執行的各平台自動發布腳本指令。</div>
+  <div class="card"><div class="card-head"><div class="card-title">📹 影片資訊</div></div><div class="card-body">
+    <div class="fgrid"><div class="field"><label>影片標題</label><input type="text" id="pub_title" placeholder="例：孩子情緒爆炸怎麼辦？先穩住自己"></div><div class="field"><label>影片檔案路徑</label><input type="text" id="pub_file" placeholder="例：/videos/W01-S01.mp4"></div></div>
+    <div class="field fgrid x1"><div class="field"><label>影片說明</label><textarea id="pub_desc" placeholder="影片完整說明文字…"></textarea></div></div>
+    <div class="fgrid"><div class="field"><label>標籤（逗號分隔）</label><input type="text" id="pub_tags" placeholder="親子教養,情緒管理,正向教養"></div><div class="field"><label>導流工具連結</label><input type="text" id="pub_url" placeholder="https://angel0973180707.github.io/angel-happy-m1/"></div></div>
+    <div class="fgrid"><div class="field"><label>排程發布時間（選填）</label><input type="datetime-local" id="pub_time"></div><div class="field"><label>隱私設定</label><select id="pub_priv"><option value="public">公開</option><option value="unlisted">不公開連結</option><option value="private">私人</option></select></div></div>
+  </div></div>
+  <div class="card"><div class="card-head"><div class="card-title">🌐 選擇發布平台</div></div><div class="card-body">
+    <div class="prow" id="pub_plats"><div class="pchip yt on" onclick="tplat(this)">YouTube 長片</div><div class="pchip yt" onclick="tplat(this)">YouTube Shorts</div><div class="pchip fb on" onclick="tplat(this)">Facebook</div><div class="pchip ig" onclick="tplat(this)">Instagram Reels</div><div class="pchip tt" onclick="tplat(this)">TikTok</div></div>
+    <button class="gbtn" onclick="genPub()">🚀 產出 Claude Code 發布指令</button>
+    <div class="out" id="pub_out">
+      <div id="pub_yt_b" style="display:none;" class="out-box"><div class="out-head"><div class="out-title">▶️ YouTube 長片發布指令</div><button class="cbtn" onclick="cp('pub_yt')">複製</button></div><div class="cc"><div class="cc-label">Claude Code 指令</div><div class="cc-content" id="pub_yt"></div></div></div>
+      <div id="pub_yts_b" style="display:none;" class="out-box"><div class="out-head"><div class="out-title">▶️ YouTube Shorts 發布指令</div><button class="cbtn" onclick="cp('pub_yts')">複製</button></div><div class="cc"><div class="cc-label">Claude Code 指令</div><div class="cc-content" id="pub_yts"></div></div></div>
+      <div id="pub_fb_b" style="display:none;" class="out-box"><div class="out-head"><div class="out-title">📘 Facebook 發布指令</div><button class="cbtn" onclick="cp('pub_fb')">複製</button></div><div class="cc"><div class="cc-label">Claude Code 指令</div><div class="cc-content" id="pub_fb"></div></div></div>
+      <div id="pub_ig_b" style="display:none;" class="out-box"><div class="out-head"><div class="out-title">📷 Instagram 發布指令</div><button class="cbtn" onclick="cp('pub_ig')">複製</button></div><div class="cc"><div class="cc-label">Claude Code 指令</div><div class="cc-content" id="pub_ig"></div></div></div>
+      <div id="pub_tt_b" style="display:none;" class="out-box"><div class="out-head"><div class="out-title">🎵 TikTok 發布指令</div><button class="cbtn" onclick="cp('pub_tt')">複製</button></div><div class="cc"><div class="cc-label">Claude Code 指令</div><div class="cc-content" id="pub_tt"></div></div></div>
+    </div>
+  </div></div>
+</div>
+
+</div>
+
+<script>
+const DB = {"stories": [{"id": 1, "title": "自序-第十九層地獄", "summary": "醫生墮入 18 層地獄，卻發現教書的在 19 層。作者反思教育責任，提出「地獄不住快樂的人」。", "tag": "#自序 #第十九層地獄 #地獄不住快樂的人 #正向教養", "quote": "地獄不住快樂的人，不快樂才會下地獄！", "brain": "前額葉皮質（理性腦）在 20-23 歲才成熟，大人需在成熟前給予引導。", "psych": "體現阿德勒的「課題分離」，透過尊重他人與為自己負責達成平衡。"}, {"id": 2, "title": "1. 雨中洗禮", "summary": "寶貝想淋雨，笑長從擔心轉為支持，準備熱水澡，驚見孩子天生的生命力。", "tag": "#雨中洗禮 #自我覺察 #放下控制 #游水反射", "quote": "無謂的煩惱只會弄糟情緒，破壞關係。", "brain": "孩子天生有「游水反射」。大人的煩惱會啟動杏仁核。", "psych": "展現「覺察 (Mindfulness)」與從「控制環境」轉向「控制回應」的心理韌性。"}, {"id": 3, "title": "2. 心靈溝通", "summary": "寶貝說出爸爸偏心的委屈，笑長鼓勵他親自打電話給爸爸，消除了父子心結。", "tag": "#心靈溝通 #情緒語言化 #鏡像神經元 #偏心感受", "quote": "能用心傾聽並接納真實感受，才能讓心與心貼近。", "brain": "「語言化」情緒能降低杏仁核活動，啟動前額葉處理問題。", "psych": "建立「直接溝通」打破「三角溝通」，建立安全依附。"}, {"id": 4, "title": "3. 被打的芒果", "summary": "爸爸強迫學習並動手，孩子說「我要打芒果」。笑長則用快樂氛圍讓孩子自然背下唐詩。", "tag": "#被打的芒果 #快樂學習 #杏仁核劫持 #暴力模仿", "quote": "暴力相向會讓孩子在學會知識前，先輸掉親子關係並學會暴力。", "brain": "壓力會劫持海馬迴導致大腦當機；快樂則分泌多巴胺增強記憶。", "psych": "班杜拉的「觀察學習」：孩子會模仿大人的攻擊行為。"}, {"id": 5, "title": "4. 我陶醉了", "summary": "孩子鬧脾氣後，用新詞彙「我陶醉了」給自己台階下，笑長接住情緒化解僵局。", "tag": "#我陶醉了 #情緒拆彈 #共同調節 #幽默感", "quote": "拆除情緒炸彈後，才會有理智的空間輕鬆掌握情境。", "brain": "穩定情緒稱為「共同調節」，孩子切換大腦頻道至語言區。", "psych": "高階的「情緒分化」與「幽默防衛機制」，保護孩子自尊。"}, {"id": 6, "title": "5. 勇於負責", "summary": "大寶貝自己泡冷牛奶灑一地，笑長讚其能幹；小寶貝則練習自己做選擇，擺脫依賴。", "tag": "#勇於負責 #自主權 #多巴胺 #選擇困難症", "quote": "讓孩子從日常生活小事開始練習做決定，面對重大決定才會有智慧。", "brain": "自主意圖完成任務會分泌多巴胺，強化前額葉執行功能。", "psych": "運用「自然後果」與「賦權」，讓孩子發展內在控制點。"}, {"id": 7, "title": "6. 誰聽誰的，各憑本事", "summary": "孩子跨海向阿嬤告狀，笑長以「肚量教育」引導，強調情緒穩定才是真本事。", "tag": "#物質欲望 #情緒調節 #前額葉皮質 #肚量教育", "quote": "誰的肚量大，誰就更有本事讓人心服。", "brain": "利用前額葉（PFC）抑制杏仁核過度反應，激活新的神經通路。", "psych": "建立「橫向一致聯盟」避免孩子鑽空子，並進行「歸因訓練」。"}, {"id": 8, "title": "7. 開心的一萬步", "summary": "孩子抱怨爬樓梯累，笑長利用小米手環將其轉化為「萬步任務」，孩子轉為開心執行。", "tag": "#開心的一萬步 #認知重塑 #動機轉化 #框架效應", "quote": "站在理解大腦發育特性的立場，就能帶領孩子從負面情緒中脫困。", "brain": "「認知評估」與「酬賞系統」：將負擔遊戲化，刺激多巴胺。", "psych": "體現「框架效應」，將「負擔」框架改為「目標」框架。"}, {"id": 9, "title": "8. 功勞與功德", "summary": "大寶貝字寫好後要笑長領功，笑長教其「功德」是做讓彼此感動的事，而非爭功。", "tag": "#功勞與功德 #放手 #內在動機 #課題分離", "quote": "功德就是做自己感動，也讓別人感動的事；退一步海闊天空。", "brain": "當外在壓力撤除，杏仁核警報解除，內在動機（多巴胺）才會啟動。", "psych": "實踐「課題分離」，將寫字課題還給孩子，建立自我效能感。"}, {"id": 10, "title": "9. 生活劇本", "summary": "哥哥因妹妹撞到他而碎念，妹妹道歉後落幕。笑長引導用「善解」改寫生活劇本。", "tag": "#生活劇本 #手足爭執 #善解 #情緒反芻", "quote": "善解能化解計較，大家共同用感恩的心寫下幸福生活劇本。", "brain": "終結「情緒反芻」，透過認知重新評估將防禦模式切換回連結模式。", "psych": "建立「社交腳本」與「後設認知」，觀察情緒而非被淹沒。"}, {"id": 11, "title": "10. 無欲則剛", "summary": "透過 100 元零用錢與「存一發一」機制，教導孩子支配金錢並與慾望平衡。", "tag": "#無欲則剛 #理財教育 #延遲滿足 #執行功能", "quote": "錢比人偉大（孩子感嘆），但人若能與慾望和平共處，才能真正控制錢。", "brain": "練習「忍」是在強化前額葉對邊緣系統的抑制，鍛鍊「延遲滿足」。", "psych": "培養「內在控制點」，透過尊重的溝通將物質問題轉化為生活智慧。"}, {"id": 12, "title": "11. 轉化情緒", "summary": "寶貝因不能打球而摔門，後透過「炒飯」化解不悅。笑長建議將怒氣轉化為做家事。", "tag": "#轉化情緒 #昇華作用 #情緒能量 #成就感", "quote": "為自己的情緒找出口或給台階下，是大人小孩都必須具備的能力。", "brain": "將邊緣系統的強大能量導向運動皮質，透過勞動產生多巴胺中和憤怒。", "psych": "展現防衛機制中的「昇華 (Sublimation)」，將衝動轉化為價值。"}, {"id": 13, "title": "12. 化敵為友", "summary": "妹妹生哥哥氣，笑長將「生氣」擬人化為朋友玩捉迷藏，讓孩子在笑容中安頓情緒。", "tag": "#化敵為友 #情緒外化 #自我覺察 #擬人化", "quote": "練習自我覺察並觀察情緒帶給我們的反應，能轉危為安。", "brain": "「情緒標籤化」與「外化」降低邊緣系統活躍度，分泌內啡肽。", "psych": "敘事治療的「外化 (Externalization)」技術，建立「內省覺察力」。"}, {"id": 14, "title": "13. 萬萬沒想到", "summary": "看完失敗教育電影後，與孩子討論恐懼。笑長引導：可怕的不是失敗，而是「害怕」。", "tag": "#失敗教育 #克服害怕 #主觀感受 #成長型思維", "quote": "真正決定自己感受的不是客觀問題，而是面對問題的主觀感受。", "brain": "進行「恐懼制約的消退」，學會將失敗與危險在腦中解連結。", "psych": "阿德勒的「主觀意義化」，將失敗重新定義為練功機會（認知重構）。"}, {"id": 15, "title": "14. 哈佛女大學生", "summary": "透過勵志電影，大寶貝宣示要拒絕油炸食物瘦下來。笑長肯定孩子下決心的力量。", "tag": "#哈佛最窮女大學生 #決心 #自我超越 #觀察學習", "quote": "看別人的故事，學到自我超越的精神與方法，就是幸福。", "brain": "啟動大腦的「動機與獎勵系統」，活化目標達成的前額葉。", "psych": "「自我參照效應」：孩子將遠大故事連結到最切身的挑戰。"}, {"id": 16, "title": "15. 幸福吸引力", "summary": "孩子提問如何吸引注意，笑長引導：透過「貼心」的回應來啟動善的循環與吸引幸福。", "tag": "#幸福吸引力 #貼心 #感恩教育 #催產素", "quote": "要幸福，就先學貼心、關心、歡喜心。", "brain": "貼心行為與及時回饋觸發「催產素（幸福荷爾蒙）」分泌，增加信任。", "psych": "「感恩實踐」強化親社會行為。在阿德勒心理學中，這是貢獻感的來源。"}, {"id": 17, "title": "16. 和樂融融", "summary": "笑長用「小仙女揮手」的幽默方式引導孩子收東西。摘下嚴肅面具，與孩子真心互動。", "tag": "#和樂融融 #人格面具 #非語言溝通 #幽默感", "quote": "跟孩子相處，適時摘下人格面具，用內在愉悅的心互動。", "brain": "利用「鏡像神經元」與「非語言溝通」，減少孩子被說教的防禦感。", "psych": "榮格的「人格面具」理論，強調大人在管教中切換角色的彈性。"}, {"id": 18, "title": "17. 上善若水", "summary": "妹妹想學習融入別人。兩人討論「融入」如水與風滲透堅石，愛則是力量的太陽。", "tag": "#上善若水 #同理心 #利他行為 #人我一體", "quote": "溫暖的愛是讓我們的心柔軟、能與人融入的源頭。", "brain": "活化「獎勵系統」產生多巴胺。愛（溫暖）能降低社交中的防禦性。", "psych": "阿德勒的「社會興趣」展現，透過繪畫進行「情感智力」訓練。"}, {"id": 19, "title": "18. 親子關係為上", "summary": "笑長主動示範數學寫錯，降低孩子壓力。強調親子關係和諧遠比成績重要。", "tag": "#親子關係為上 #心理安全感 #脆弱的力量 #我能感", "quote": "體會親子關係和諧遠比成績重要，關係就不會輕易破壞。", "brain": "建立「心理安全感」，當大人示範錯誤，孩子的杏仁核會降低警報。", "psych": "布芮尼·布朗的「脆弱的力量」，大人展現不完美能建立平權合作。"}, {"id": 20, "title": "19. 作文比賽", "summary": "錯別字大王參加比賽，笑長從強加壓力轉為生活對話引導，意外獲得第一名。", "tag": "#作文比賽 #潛能開發 #平常心 #自我效能感", "quote": "比賽只是經驗，過程最重要。享受快樂能累積正能量。", "brain": "放鬆專注能進入「心流」，讓負責語言與創意的神經通路活絡。", "psych": "「腳手架理論」：大人搭建對話架子引導孩子，建立自我效能感。"}, {"id": 21, "title": "20. 愛惜光陰", "summary": "孩子從「瞎忙」搜集資料到反過來「教」大人什麼是時間規劃，達成雙贏。", "tag": "#愛惜光陰 #自主學習 #費曼技巧 #良性壓力", "quote": "適時把問題拋給孩子探索，大人負責拍手，能挖掘潛能。", "brain": "「主動召回」與「費曼技巧」強化記憶。適度壓力提供良性動力。", "psych": "「發現學習法」：讓孩子從主導地位建立「心理勝任感」。"}, {"id": 22, "title": "21. 做學問要會問", "summary": "孩子寫作業遇到困難卻不敢問。笑長導正觀念：要問「方法」而不是問「答案」。", "tag": "#做學問要會問 #自主學習 #後設認知 #執行功能", "quote": "要怎麼收穫就怎麼栽！主動學習遠比被動學習更有效果。", "brain": "主動探索活化「突觸可塑性」，鍛鍊前額葉的執行功能。", "psych": "「自我決定論」：不給答案是為了保護孩子的「勝任感」。"}, {"id": 23, "title": "22. 畢業典禮有感", "summary": "回顧大寶貝從小病多、成績墊底到找回自信的歷程。樂觀正向能造就強大韌性。", "tag": "#畢業典禮有感 #正向心理學 #心靈韌性 #自我效能感", "quote": "樂觀態度造就強大韌性，讓自己在挫折中看到希望。", "brain": "樂觀預期促進「血清素」分泌。在無焦慮環境下，神經塑性更強。", "psych": "關注長處與韌性（正向心理學），幫助孩子轉向「習得性樂觀」。"}, {"id": 24, "title": "校園篇序", "summary": "教職 25 年心得。提出分齡引導：低年級重感性、中年級重鼓勵、高年級重激勵。", "tag": "#校園篇 #分齡教養 #社會腦 #無條件正向關懷", "quote": "以「愛、感恩與尊重」建立的關係，是化解一切衝突的基礎。", "brain": "「社會腦」機制：充滿愛的環境分泌催產素，有利於學習。", "psych": "符合埃里克森心理發展階段，對內在孩子進行一致性的照顧。"}, {"id": 25, "title": "1. 老師好神", "summary": "愛哭女孩嘲笑跌倒男同學「愛哭會倒楣」，隨即撞到柱子。笑長藉此進行機會教育。", "tag": "#老師好神 #機會教育 #境教 #同理心", "quote": "言教不如身教、身教不如境教。", "brain": "「觀察學習」與海馬迴的「情緒印記」，讓情境連結深刻。", "psych": "利用「自然後果」引導「社會利他」，建立同理心神經連結。"}, {"id": 26, "title": "2. 正向思考", "summary": "透過正向思考引導兩位拒學孩子與其家長，強調「家長快樂，孩子才會快樂」。", "tag": "#正向思考 #情緒感染 #心理韌性 #快樂習慣", "quote": "孩子是鏡子，要感謝孩子呈現問題，讓我們看見缺點。", "brain": "「情緒感染」：家長的穩定能降低孩子杏仁核的壓力反應。", "psych": "馬丁·塞利格曼理論：快樂是成功的先兆。建立「心理安全邊界」。"}, {"id": 27, "title": "3. 外星人", "summary": "面對天馬行空的孩子，笑長不硬論對錯，順著邏輯玩在一起，被孩子封為「菩薩」。", "tag": "#外星人 #幽默教養 #認知靈活性 #順勢教養", "quote": "順著孩子的想法玩起來，能拉近距離並啟發創意思維。", "brain": "幽默刺激多巴胺。當孩子對老師有愛的連結，催產素會提高受教性。", "psych": "「遊戲取向」溝通與「安全基地」象徵。"}, {"id": 28, "title": "4. 別管我的人生", "summary": "孩子拒絕老師幫忙收抽屜並咆哮。笑長看見其背後被母嫌棄的委屈，以包容帶領其脫困。", "tag": "#別管我的人生 #心理邊界 #情緒勒索 #認知重構", "quote": "帶孩子脫離情緒深淵，除了理智更需要柔軟的包容。", "brain": "凌亂抽屜是孩子的「領地」，大人介入會觸發杏仁核「威脅偵測」。", "psych": "孩子試圖建立「心理邊界」，老師透過「非暴力溝通」完成認知重構。"}, {"id": 29, "title": "5. 頑石點頭", "summary": "固執生氣的孩子拒絕道歉。笑長給予「可生氣但要道歉」的選擇權，化解權力爭奪。", "tag": "#頑石點頭 #遞樓梯 #選擇權 #前額葉活化", "quote": "孩子固執是困在情緒裡，大人要負責「遞樓梯」給孩子下。", "brain": "給予選擇權能活化前額葉判斷，從「情緒腦」切換到「理性腦」。", "psych": "避開「權力鬥爭」，透過「正向強化」建立認錯的社會勇氣。"}, {"id": 30, "title": "6. 相信的力量", "summary": "透過制度化甄選班長，讓玻璃心孩子承擔責任。笑長學會放手，孩子發揮出責任心。", "tag": "#相信的力量 #賦權 #畢馬龍效應 #心理韌性", "quote": "當我們願意相信孩子，騰出空間，孩子會竭盡所能扮演好角色。", "brain": "「執行功能」鍛鍊：放手讓大腦自主決策，強化前額葉。", "psych": "「畢馬龍效應」與「鷹架理論」，將玻璃心淬煉成責任感。"}, {"id": 31, "title": "7. 發現新天地", "summary": "利用放鬆音樂取代咆哮指令，改善班級氣氛。孩子焦慮症狀消失，學習更專注。", "tag": "#發現新天地 #音樂療癒 #腦波調節 #情緒氛圍", "quote": "善用科學知識並在尊重基礎上互動，能化解對立與擔憂。", "brain": "音樂將腦波從緊張 Beta 轉向放鬆 Alpha，平衡自主神經系統。", "psych": "「情緒氛圍理論」：重塑環境能改變孩子的「核心自我評價」。"}, {"id": 32, "title": "8. 讓世界更美麗", "summary": "輔導智障且不潔的孩子，從洗澡開始重建自尊。孩子最後領悟：微笑能讓世界更美。", "tag": "#讓世界更美麗 #感官滋養 #安全依附 #自我價值", "quote": "教育是對生命個體的尊重和喚醒。", "brain": "感官滋養（洗澡、清潔）刺激體感皮質，找回主控感與催產素。", "psych": "「人本主義教育」：老師作為「重要他人」改寫孩子的自我圖式。"}, {"id": 33, "title": "9. 火山爆發", "summary": "衝動孩子克制了揍人的衝動。笑長肯定其「練功」成果，將衝突轉化為互助。", "tag": "#火山爆發 #衝動控制 #前額葉煞車 #情緒粒度", "quote": "練功夫要有耐心，才能真正變成武林高手。", "brain": "強化前額葉（PFC）的「煞車」功能。理解情緒訊號能降低杏仁核活躍度。", "psych": "運用「角色修復」，將情緒爆發轉化為「自我效能感」的提升。"}, {"id": 34, "title": "10. 期待與付出", "summary": "針對不愛讀書的孩子，笑長與家長達成「放下過度期待」共識，孩子反而順利背完乘法。", "tag": "#期待與付出 #預期管理 #親師合作 #軟實力", "quote": "如果不先要求他人，而是自己先付出，和諧就會產生。", "brain": "預期管理：降低壓力水平，讓大腦報酬系統能因小進步獲得多巴胺。", "psych": "阿德勒的「課題分離」：從「外控」轉向「內控」的陪伴過程。"}, {"id": 35, "title": "11. 心球星球", "summary": "透過遊戲教導情緒會傳染（情緒寄生），引導孩子當好自己星球的「情緒國王」。", "tag": "#心球星球 #社交腦 #情緒寄生 #外化情緒", "quote": "每個人都是自己星球的國王，你的脾氣就是給別人的命令。", "brain": "訓練前額葉進行「觀點取代」，減少「情緒感染」的負面影響。", "psych": "薩提爾的「冰山理論」應用，建立強大的內在控制感與邊界。"}, {"id": 36, "title": "12. 釋出善意", "summary": "面對無人承認的錯誤，笑長釋出善意「一筆勾銷」，給孩子改過的心理台階。", "tag": "#釋出善意 #冷處理 #信任教育 #心理台階", "quote": "犯錯不可恥，可恥的是不改過。", "brain": "撤除大腦「威脅警報」，讓前額葉在安全感中重新思考道德邏輯。", "psych": "利用「認知失調」，讓孩子傾向做出符合期望的正面行為。"}, {"id": 37, "title": "13. 順勢療法", "summary": "高年級生賭氣時，笑長笑稱「生氣是短暫發瘋」。孩子為了不當傻瓜，自發放下脾氣。", "tag": "#順勢療法 #髓鞘化 #前額葉成熟 #元認知", "quote": "傻瓜才讓壞脾氣修理自己！拿得起放得下才有勇氣。", "brain": "青春期前額葉未成熟，笑長啟動孩子的「元認知」來觀察情緒。", "psych": "「心理位移」技術：將憤怒與人格分開，利用認知失調引導。"}, {"id": 38, "title": "14. 大小眼風波", "summary": "女生被笑大小眼。笑長解讀為「那人一定是太喜歡妳才看這麼細」，化解尷尬。", "tag": "#大小眼風波 #框架效應 #幽默防禦 #認知重構", "quote": "幽默和風趣是智慧的閃現。", "brain": "「框架效應」：將「羞辱（杏仁核）」重新框架為「關注（多巴胺）」。", "psych": "社交智慧：用幽默打破嘲諷迴路，強化孩子內在的穩定感。"}, {"id": 39, "title": "15. 化被動為主動", "summary": "笑長終止「叫床」與「催作業」，讓孩子在承擔後果中學會自我負責。", "tag": "#化被動為主動 #執行功能 #自然後果 #自主感", "quote": "停止剝奪孩子主動學習的機會，孩子才會發現主動負責最輕鬆。", "brain": "撤除「外掛前額葉（大人催促）」，強迫大腦啟動自我管理迴路。", "psych": "阿德勒的「課題分離」：清楚劃分責任歸屬，從被逼轉為自發。"}, {"id": 40, "title": "創作篇序", "summary": "成立「幸福畫室」。有些靈感是啟發，有些是感動，將內心世界表達出來是快樂的事。", "tag": "#幸福畫室 #全腦開發 #藝術治療 #流動體驗", "quote": "創作是分享快樂能量，讓這份能量流淌在生命裡。", "brain": "藝術表達開發「全腦功能」，促進左右腦訊息傳遞與情緒整合。", "psych": "「高峰經驗」：創作提供中介空間，讓難以言說的情緒被看見。"}, {"id": 41, "title": "1. 思維超能力", "summary": "鼓勵怕失敗的寶貝：真正的勝利是隨緣，真正的專注是放鬆，發揮思維超能力。", "tag": "#思維超能力 #流動狀態 #成長型思維 #清明", "quote": "有一種勝利，是不計較輸贏的勝利。", "brain": "「放鬆專注」使大腦進入 Alpha 與 Theta 波交界，創意最盛。", "psych": "耶基斯–多德森定律：壓力適度（隨緣放鬆）時表現最佳。"}, {"id": 42, "title": "2. 值得嗎", "summary": "運動會輸了孩子在抱怨。笑長提問：為了比較失去歡笑，值得嗎？將負能量轉化為詩。", "tag": "#值得嗎 #情緒標籤 #自我反思 #認知重定向", "quote": "計較丟了肚量，比較掉了歡笑。值得嗎？", "brain": "啟動「內側前額葉（mPFC）」進行自我反思，減少皮質醇。", "psych": "心理學的「價值觀釐清」，引導孩子重新排列生命優先順序。"}, {"id": 43, "title": "3. 就是要你管", "summary": "睡前閒聊，孩子感嘆被愛的人管也是一種幸福。管教的核心是培養判斷力與自制力。", "tag": "#就是要你管 #安全依附 #判斷力 #情感帳戶", "quote": "因為我們已互動出彼此欣賞和感恩，那誰被誰管都心甘情願。", "brain": "「社交報酬」路徑：充滿愛時，管教走的是多巴胺獎勵系統。", "psych": "史蒂芬·柯維的「情感帳戶」：存款夠多，嘮叨才不會破產。"}, {"id": 44, "title": "4. 加倍幸福", "summary": "利用乘法邏輯教導孩子：幸福如珍珠，分享（複製）出去就會加倍。", "tag": "#加倍幸福 #聯合學習 #正向螺旋 #多巴胺與催產素", "quote": "不斷分享幸福，幸福不斷加倍。", "brain": "「抽象轉具象」：利用珍珠與聚寶盆視覺化影像強化數學記憶。", "psych": "「正向螺旋」：分享是提升「主觀幸福感」最快的方式。"}, {"id": 45, "title": "5. 有求必應", "summary": "父母愛「念經」數落孩子。笑長建議改念「幸福經」：用愛與感恩欣賞長處。", "tag": "#有求必應 #幸福經 #欣賞式探詢 #心智化", "quote": "與其成天看孩子的短處擔憂，不如欣賞孩子的長處並放大。", "brain": "正向氣氛誘導催產素與血清素，關閉警報系統，活化社會參與。", "psych": "「欣賞式探詢」：當父母看孩子像菩薩，孩子就會像菩薩。"}, {"id": 46, "title": "6-8. 畢冊童詩", "summary": "珍藏童年、時間、不捨嘮叨。畢業前夕，孩子發現連老師的嘮叨都變甜蜜了。", "tag": "#畢冊童詩 #峰終定律 #情感標籤 #海馬迴", "quote": "離別的不捨，竟讓我開始不討厭老師的嘮嘮叨叨。", "brain": "「情感標籤」：海馬迴儲存記憶，杏仁核在離別之際貼上幸福標籤。", "psych": "心理學「峰終定律」：結束時的感受決定了對整個階段的觀感。"}, {"id": 47, "title": "後記：慢飛的鳥", "summary": "海鷗起飛慢但能飛越大海。教育是尊重個體的生命節律，以寬容為基礎。", "tag": "#慢飛的鳥 #等待的智慧 #尊重生命 #成長型思維", "quote": "教育，是對生命個體的尊重和喚醒，這一切必須以寬容為基礎！", "brain": "大腦發育節律因人而異。寬容能避免高壓力（皮質醇）抑制學習。", "psych": "卡羅·杜維克的「成長型思維」：欣賞孩子的進步而非固定智力。"}], "insights": [{"code": "R001", "main": "跟自己的關係", "sub": "情緒", "title": "你不是太脆弱，是撐太久了"}, {"code": "R002", "main": "跟自己的關係", "sub": "情緒", "title": "悲傷沒有那麼重，是你太用力扛了"}, {"code": "R003", "main": "跟自己的關係", "sub": "情緒", "title": "你其實只是很久沒有被好好抱過"}, {"code": "R004", "main": "跟自己的關係", "sub": "情緒", "title": "不是你情緒多，是你太久沒被理解"}, {"code": "R005", "main": "跟自己的關係", "sub": "情緒", "title": "有些難過，是身體在幫你說話"}, {"code": "R006", "main": "跟自己的關係", "sub": "情緒", "title": "你不是撐不住，是已經撐很久了"}, {"code": "R007", "main": "跟自己的關係", "sub": "情緒", "title": "情緒不是問題，是你太久沒停下來"}, {"code": "R008", "main": "跟自己的關係", "sub": "情緒", "title": "有些崩潰，其實是在保護你"}, {"code": "R009", "main": "跟自己的關係", "sub": "情緒", "title": "你不是敏感，是你真的有在感受"}, {"code": "R010", "main": "跟自己的關係", "sub": "情緒", "title": "今天不堅強，也沒關係"}, {"code": "R011", "main": "跟自己的關係", "sub": "覺察", "title": "你不是不夠好，是太習慣忽略自己"}, {"code": "R012", "main": "跟自己的關係", "sub": "覺察", "title": "你一直在努力，只是沒看見"}, {"code": "R013", "main": "跟自己的關係", "sub": "覺察", "title": "那些讓你累的，不只是事情"}, {"code": "R014", "main": "跟自己的關係", "sub": "覺察", "title": "你有多久沒有聽自己說話了"}, {"code": "R015", "main": "跟自己的關係", "sub": "覺察", "title": "不是世界太難，是你太用力了"}, {"code": "R016", "main": "跟自己的關係", "sub": "覺察", "title": "你其實知道，只是沒有停下來"}, {"code": "R017", "main": "跟自己的關係", "sub": "覺察", "title": "當你開始看見自己，一切就變了"}, {"code": "R018", "main": "跟自己的關係", "sub": "覺察", "title": "有些不舒服，是提醒你該停了"}, {"code": "R019", "main": "跟自己的關係", "sub": "覺察", "title": "你其實比你以為的還清楚"}, {"code": "R020", "main": "跟自己的關係", "sub": "覺察", "title": "你可以對自己誠實一點"}, {"code": "R021", "main": "跟自己的關係", "sub": "自我關係", "title": "你怎麼對自己說話，很重要"}, {"code": "R022", "main": "跟自己的關係", "sub": "自我關係", "title": "你有站在自己這邊嗎"}, {"code": "R023", "main": "跟自己的關係", "sub": "自我關係", "title": "你可以成為自己的依靠"}, {"code": "R024", "main": "跟自己的關係", "sub": "自我關係", "title": "停止責怪自己，是一種轉變"}, {"code": "R025", "main": "跟自己的關係", "sub": "自我關係", "title": "你值得被好好對待，包括你自己"}, {"code": "R026", "main": "跟自己的關係", "sub": "自我關係", "title": "對自己溫柔，不會讓你變弱"}, {"code": "R027", "main": "跟自己的關係", "sub": "自我關係", "title": "你不需要一直修正自己"}, {"code": "R028", "main": "跟自己的關係", "sub": "自我關係", "title": "允許自己不完美"}, {"code": "R029", "main": "跟自己的關係", "sub": "自我關係", "title": "和自己站在同一邊"}, {"code": "R030", "main": "跟自己的關係", "sub": "自我關係", "title": "你已經夠努力了"}, {"code": "R031", "main": "跟人的關係", "sub": "理解", "title": "你不是難相處，只是太累了"}, {"code": "R032", "main": "跟人的關係", "sub": "理解", "title": "有些冷淡，其實是在自我保護"}, {"code": "R033", "main": "跟人的關係", "sub": "理解", "title": "不是不在乎，是不知道怎麼說"}, {"code": "R034", "main": "跟人的關係", "sub": "理解", "title": "每個人都有他的難"}, {"code": "R035", "main": "跟人的關係", "sub": "理解", "title": "你不需要讓所有人都喜歡你"}, {"code": "R036", "main": "跟人的關係", "sub": "理解", "title": "有些距離，是為了讓關係更好"}, {"code": "R037", "main": "跟人的關係", "sub": "理解", "title": "不是每個人都能理解你"}, {"code": "R038", "main": "跟人的關係", "sub": "理解", "title": "你可以選擇不被影響"}, {"code": "R039", "main": "跟人的關係", "sub": "理解", "title": "不是所有誤會都需要解釋"}, {"code": "R040", "main": "跟人的關係", "sub": "理解", "title": "你可以不再證明自己"}, {"code": "R041", "main": "跟人的關係", "sub": "界線", "title": "你可以說不"}, {"code": "R042", "main": "跟人的關係", "sub": "界線", "title": "拒絕，不等於傷害"}, {"code": "R043", "main": "跟人的關係", "sub": "界線", "title": "不是所有請求都要答應"}, {"code": "R044", "main": "跟人的關係", "sub": "界線", "title": "你可以保護自己的能量"}, {"code": "R045", "main": "跟人的關係", "sub": "界線", "title": "你有權利選擇距離"}, {"code": "R046", "main": "跟人的關係", "sub": "界線", "title": "讓關係有空間，才走得遠"}, {"code": "R047", "main": "跟人的關係", "sub": "界線", "title": "不是靠近才是愛"}, {"code": "R048", "main": "跟人的關係", "sub": "界線", "title": "界線，是一種尊重"}, {"code": "R049", "main": "跟人的關係", "sub": "界線", "title": "你也需要在關係裡存在"}, {"code": "R050", "main": "跟人的關係", "sub": "界線", "title": "慢慢學會拒絕，是一種成長"}, {"code": "R051", "main": "跟人的關係", "sub": "互動", "title": "有些沉默，是一種溫柔"}, {"code": "R052", "main": "跟人的關係", "sub": "互動", "title": "你不需要一直回應所有人"}, {"code": "R053", "main": "跟人的關係", "sub": "互動", "title": "慢一點回應，也沒關係"}, {"code": "R054", "main": "跟人的關係", "sub": "互動", "title": "不是每句話都需要接住"}, {"code": "R055", "main": "跟人的關係", "sub": "互動", "title": "你可以選擇安靜"}, {"code": "R056", "main": "跟人的關係", "sub": "互動", "title": "有些回應，可以不說出口"}, {"code": "R057", "main": "跟人的關係", "sub": "互動", "title": "關係裡，也需要呼吸"}, {"code": "R058", "main": "跟人的關係", "sub": "互動", "title": "你不需要一直解釋自己"}, {"code": "R059", "main": "跟人的關係", "sub": "互動", "title": "不是沉默，是選擇平靜"}, {"code": "R060", "main": "跟人的關係", "sub": "互動", "title": "你可以選擇簡單一點"}, {"code": "R061", "main": "跟事的關係", "sub": "壓力", "title": "你不是事情本身"}, {"code": "R062", "main": "跟事的關係", "sub": "壓力", "title": "有些壓力，不需要全部承擔"}, {"code": "R063", "main": "跟事的關係", "sub": "壓力", "title": "你可以慢慢來"}, {"code": "R064", "main": "跟事的關係", "sub": "壓力", "title": "事情多，不代表你不好"}, {"code": "R065", "main": "跟事的關係", "sub": "壓力", "title": "先停一下，也是一種前進"}, {"code": "R066", "main": "跟事的關係", "sub": "壓力", "title": "不是每件事都要完美"}, {"code": "R067", "main": "跟事的關係", "sub": "壓力", "title": "做得到的，就很好了"}, {"code": "R068", "main": "跟事的關係", "sub": "壓力", "title": "你不需要證明自己"}, {"code": "R069", "main": "跟事的關係", "sub": "壓力", "title": "一步一步，就很好"}, {"code": "R070", "main": "跟事的關係", "sub": "壓力", "title": "你已經在往前了"}, {"code": "R071", "main": "跟事的關係", "sub": "放下", "title": "有些事，可以不用再抓住"}, {"code": "R072", "main": "跟事的關係", "sub": "放下", "title": "放下，不代表失去"}, {"code": "R073", "main": "跟事的關係", "sub": "放下", "title": "你可以選擇不再消耗"}, {"code": "R074", "main": "跟事的關係", "sub": "放下", "title": "有些執著，會讓你更累"}, {"code": "R075", "main": "跟事的關係", "sub": "放下", "title": "讓事情回到它的位置"}, {"code": "R076", "main": "跟事的關係", "sub": "放下", "title": "你可以慢慢鬆開"}, {"code": "R077", "main": "跟事的關係", "sub": "放下", "title": "不是放棄，是轉換"}, {"code": "R078", "main": "跟事的關係", "sub": "放下", "title": "放過自己，也放過事情"}, {"code": "R079", "main": "跟事的關係", "sub": "放下", "title": "有些事，會自然結束"}, {"code": "R080", "main": "跟事的關係", "sub": "放下", "title": "你可以不用一直撐"}, {"code": "R081", "main": "跟環境的關係", "sub": "生活感", "title": "日子其實一直在發光"}, {"code": "R082", "main": "跟環境的關係", "sub": "生活感", "title": "一點點平靜，也很好"}, {"code": "R083", "main": "跟環境的關係", "sub": "生活感", "title": "生活不是只有忙碌"}, {"code": "R084", "main": "跟環境的關係", "sub": "生活感", "title": "你有看到今天的光嗎"}, {"code": "R085", "main": "跟環境的關係", "sub": "生活感", "title": "慢慢過，也是一種方式"}, {"code": "R086", "main": "跟環境的關係", "sub": "生活感", "title": "平凡裡，也有溫柔"}, {"code": "R087", "main": "跟環境的關係", "sub": "生活感", "title": "今天的風，剛剛好"}, {"code": "R088", "main": "跟環境的關係", "sub": "生活感", "title": "日常，也可以很療癒"}, {"code": "R089", "main": "跟環境的關係", "sub": "生活感", "title": "你正在生活裡"}, {"code": "R090", "main": "跟環境的關係", "sub": "生活感", "title": "把日子過柔一點"}, {"code": "R091", "main": "跟環境的關係", "sub": "幸福感", "title": "幸福不是得到，是感受到"}, {"code": "R092", "main": "跟環境的關係", "sub": "幸福感", "title": "幸福，其實一直都在"}, {"code": "R093", "main": "跟環境的關係", "sub": "幸福感", "title": "你有感覺到嗎"}, {"code": "R094", "main": "跟環境的關係", "sub": "幸福感", "title": "幸福不需要很大"}, {"code": "R095", "main": "跟環境的關係", "sub": "幸福感", "title": "一點點，也很好"}, {"code": "R096", "main": "跟環境的關係", "sub": "幸福感", "title": "你正在靠近幸福"}, {"code": "R097", "main": "跟環境的關係", "sub": "幸福感", "title": "幸福，是一種狀態"}, {"code": "R098", "main": "跟環境的關係", "sub": "幸福感", "title": "你已經在裡面了"}, {"code": "R099", "main": "跟環境的關係", "sub": "幸福感", "title": "慢慢感受，就會出現"}, {"code": "R100", "main": "跟環境的關係", "sub": "幸福感", "title": "今天，也可以很幸福"}], "decodes": {"emotion": [{"code": "ED-01", "title": "情緒標籤：心跳快就是生氣嗎？", "brain": "島葉 (Insula) 讀取數據，PFC 賦予意義。", "metaphor": "數據標籤 (Data Tagging)", "example": "大腦是「推論」出情緒的。心跳快+有人插隊=生氣；心跳快+暗戀對象出現=心動。"}, {"code": "ED-02", "title": "杏仁核劫持：理智為什麼會斷電？", "brain": "杏仁核 (Amygdala) 啟動戰或逃反應。", "metaphor": "核心驅動劫持 (Kernel Hijack)", "example": "原始保全發現「老虎」時會直接關掉理智執行長的電源，讓你還沒思考就先吼出來。"}, {"code": "ED-03", "title": "內在衝突：腦袋裡的天使與魔鬼", "brain": "邊緣系統 (衝動) vs. 前額葉 (規則)", "metaphor": "底層驅動 vs. 社會化套件", "example": "想吃蛋糕的衝動與減肥目標在爭奪控制權，你感到的「糾結」是神經放電的物理拉扯感。"}, {"code": "ED-04", "title": "焦慮迴路：腦袋裡的災難片導演", "brain": "預測編碼 (Predictive Coding) 機制。", "metaphor": "預設報錯機制 (Default Error)", "example": "為了省電，大腦預設「未知=危險」。孩子晚五分鐘回家，大腦已演完《即刻救援》。"}, {"code": "ED-05", "title": "多巴胺：它是動機，不是快樂", "brain": "VTA 獎勵系統釋放多巴胺。", "metaphor": "動機誘惑郵件 (Motivation Mail)", "example": "多巴胺是告訴你「去做這件事會有獎金」。滑手機的快感來自「預期」，而非內容本身。"}, {"code": "ED-06", "title": "道德噁心：為什麼背叛會讓人想吐？", "brain": "島葉 (Insula) 處理生理與心理厭惡。", "metaphor": "跨模態插件 (Cross-modal Plugin)", "example": "大腦挪用偵測「腐爛食物」的古老電路來處理「不公平」，所以看到作弊會真的感到噁心。"}, {"code": "ED-07", "title": "悲傷訊號：身體的「低能耗模式」", "brain": "島葉偵測失落感，啟動求助機制。", "metaphor": "緊急 SOS 訊號 / 節能模式", "example": "悲傷是為了把照顧者叫回來。它是身體感到沉重、電力不足，強迫你停下來修復。"}, {"code": "ED-08", "title": "情緒與記憶：被心情篡改的歷史", "brain": "記憶再鞏固 (Reconsolidation)。", "metaphor": "讀取並覆寫 (Read-and-Rewrite)", "example": "生氣時回憶往事，大腦會用現在的憤怒「自動補遺」對方的表情，把它變得很猙獰。"}, {"code": "ED-09", "title": "命名法：說出名字就能馴服恐懼", "brain": "前額葉皮質 (PFC) 介入監控。", "metaphor": "系統管理員啟動 (Admin Login)", "example": "說出「我的保全又在亂按警報了」能強行啟動理智，這叫 Name it to tame it。"}, {"code": "ED-10", "title": "生理後門：呼吸能「駭」掉焦慮", "brain": "迷走神經 (Vagus Nerve) 與呼吸節奏。", "metaphor": "系統強制通報 (Force Notification)", "example": "吐氣比吸氣長是在向大腦發送「沒有老虎在追我」的訊號，強迫杏仁核安靜。"}, {"code": "ED-11", "title": "情緒基模：你的情緒被誰編程了？", "brain": "多巴胺強化學習與社會建構。", "metaphor": "遺留系統 (Legacy System)", "example": "小時候哭鬧能換來玩具，大腦就把「憤怒」編譯成有效工具，長大後自動運行。"}, {"code": "ED-12", "title": "情緒重灌：如何重寫你的感覺？", "brain": "神經可塑性 (Neuroplasticity)。", "metaphor": "系統重灌 / 修補程式 (Patch)", "example": "透過「相信能改」、建立「斷點」與「重複新獎勵」，可以手動修改舊的情緒腳本。"}], "relation": [{"code": "RD-01", "title": "第一印象：大腦的快速分類演算法", "brain": "基模 (Schema) 與 12 毫秒快速反應。", "metaphor": "預設分類演算法", "example": "大腦為了省電，見面不到一秒就幫對方貼好「標籤」。你不是在看「他」，是在看你的「分類檔案」。"}, {"code": "RD-02", "title": "戀愛腦：被劫持的最高權限", "brain": "多巴胺與催產素屏蔽前額葉 (PFC)。", "metaphor": "最高權限劫持 (Root Access)", "example": "談戀愛時，賀爾蒙會暫時關閉你的理智防火牆，讓系統指令變成：只要是 TA，通通都接受。"}, {"code": "RD-03", "title": "頻率相同：鏡像神經元的共振", "brain": "鏡像神經元 (Mirror Neurons) 同步放電。", "metaphor": "通訊協議同步 (API Sync)", "example": "所謂「三觀相近」就是雙方通訊協議一致。跟懂你的人聊天，大腦預測誤差低，跑起來特別省電舒服。"}, {"code": "RD-04", "title": "善意變惡意：你的防火牆擋錯人？", "brain": "認知基模誤讀外部數據包。", "metaphor": "防火牆誤判 (Firewall Error)", "example": "對方想幫忙，但若你的基模寫著「沒好事」，你的防火牆會把「善意數據」過濾成「他想搶我功勞」。"}, {"code": "RD-05", "title": "吵架翻舊帳：記憶不是錄影帶", "brain": "記憶再鞏固與自動補遺。", "metaphor": "讀取並覆寫 (Read-and-Rewrite)", "example": "回憶不是讀檔，是現場重畫。吵架時，大腦會用現在的「討厭」去幫對方補上一個「沒做過的壞表情」。"}, {"code": "RD-06", "title": "三觀不合：Windows 遇上 Mac", "brain": "前扣帶迴 (ACC) 偵測衝突與報錯。", "metaphor": "作業系統不相容 (OS Mismatch)", "example": "主管要「狼性」，你要「生活平衡」。這不是誰對錯，是底層運算邏輯互斥，大腦 ACC 區正在瘋狂報錯。"}, {"code": "RD-07", "title": "離不開渣男/女：遺留系統的困境", "brain": "基底核慣性與髓鞘化高速公路。", "metaphor": "遺留系統 (Legacy System)", "example": "舊關係雖然痛苦但「不耗能」。修改核心代碼代價太高，大腦怕系統崩潰，所以寧願繼續跑舊程式。"}, {"code": "RD-08", "title": "標籤化偏見：你看到的只是標籤", "brain": "視網膜效應 (RAS) 自動過濾資訊。", "metaphor": "搜尋引擎過濾器", "example": "你覺得「Z 世代很草莓」，大腦就會像 Google 一樣幫你擋掉所有「勤奮年輕人」的證據。"}, {"code": "RD-09", "title": "自證預言：你自己創造了敵人", "brain": "偏見引發的偏差行為。", "metaphor": "自定義腳本執行", "example": "你幻覺對方不愛你了，於是開始攻擊 TA。對方回擊後，你大腦高喊：「看吧！我早就知道 TA 不愛我了！」"}, {"code": "RD-10", "title": "賀爾蒙退潮：系統重啟的現實感", "brain": "熱戀期結束，前額葉 (PFC) 重新上線。", "metaphor": "系統重啟 (System Reboot)", "example": "當戀愛濾鏡消失，防火牆重新開啟。其實 TA 沒變，是你的系統重啟了。"}, {"code": "RD-11", "title": "社交同溫層：大腦的節能小圈圈", "brain": "DMN 的自我驗證與獎勵。", "metaphor": "演算法泡泡 (Filter Bubble)", "example": "找「同頻」的人取暖能獲得多巴胺獎勵。大腦討厭驚訝，只喜歡聽「跟我想法一樣」的話來省電。"}, {"code": "RD-12", "title": "解碼衝突：駭入人際關係的斷點", "brain": "後設認知 (Metacognition) 介入。", "metaphor": "手動 Debug 程序", "example": "衝突發生時，告訴自己：「這不是 TA 找碴，是我們作業系統版本不同。」這句話就是停止吵架的 Debug 鑰匙。"}], "parenting": [{"code": "PD-01", "title": "開機儀式：孩子何時發現「我」？", "brain": "多感官整合與神經迴路對齊。", "metaphor": "指針建立 (Pointer Assignment)", "example": "18個月大的「鏡像測試」是自我程式的啟動。當孩子摸自己鼻子上的紅點，代表 self=this_body 指針正式建立。"}, {"code": "PD-02", "title": "你是孩子的鏡子：評價即代碼", "brain": "鏡中自我理論與外部數據注入。", "metaphor": "外部數據寫入 (External Data Input)", "example": "孩子透過父母這面「鏡子」看自己。你說「你好棒」，大腦就執行 self.properties.add('聰明') 的寫入程序。"}, {"code": "PD-03", "title": "多巴胺：大腦裡的「助焊劑」", "brain": "VTA 獎勵系統釋放多巴胺。", "metaphor": "硬體燒錄 (Hardware Burning)", "example": "多巴胺能強化神經連結。讚美要精準，因為多巴胺會像「助焊劑」把當下的行為與正面評價焊接在一起。"}, {"code": "PD-04", "title": "主我與客我：孩子心中的拉扯", "brain": "邊緣系統 vs. 前額葉皮質 (PFC)。", "metaphor": "原始進程 vs. 社會化套件", "example": "「主我」想搶玩具，「客我」提醒要禮貌。教養是協助孩子發展客我程序，與原始衝動達成協議。"}, {"code": "PD-05", "title": "標籤化教育：別亂貼「壞標籤」", "brain": "自我知覺理論與推論機制。", "metaphor": "錯誤標籤 (Buggy Labeling)", "example": "孩子會觀察自己行為來推斷自我想像。若總被標記為「頑皮」，大腦會推論「我就是壞小孩」並存檔。"}, {"code": "PD-06", "title": "味覺訓練：愛吃苦瓜不是天生的", "brain": "眼眶額葉 (OFC) 的價值評估。", "metaphor": "空白表格填充 (Form Filling)", "example": "孩子吃檸檬或苦瓜的反應是「數據收集」。父母的鼓勵能將「厭惡訊號」重寫為「好玩的遊戲」。"}, {"code": "PD-07", "title": "情緒教育：教孩子「命名」情緒", "brain": "島葉讀取數據，PFC 貼標籤。", "metaphor": "系統管理員登入 (Admin Login)", "example": "當孩子大哭時，教他「這叫難過」。命名情緒能啟動理智執行長，馴服緊張的杏仁核。"}, {"code": "PD-08", "title": "習慣養成：交棒給自動化機器人", "brain": "前額葉 (PFC) 交棒給基底核。", "metaphor": "後台化處理 (Offloading)", "example": "學才藝或生活習慣很累，是因為 PFC 全速運轉。重複訓練能讓程式編譯進後台，變成自動化慣性。"}, {"code": "PD-09", "title": "崩潰現場：被保全劫持的小腦袋", "brain": "杏仁核劫持系統，關閉 PFC。", "metaphor": "系統當機 (System Crash)", "example": "孩子鬧脾氣時是「保全」接管了系統，此時講道理沒用，因為他的「執行長」已經斷電下班。"}, {"code": "PD-10", "title": "世界觀修路：父母是首任工程師", "brain": "認知基模 (Schema) 的大規模訓練。", "metaphor": "預設作業系統 (Default OS)", "example": "父母透過重複言行在孩子腦中「修路」。這些神經高速公路決定孩子未來如何解讀世界。"}, {"code": "PD-11", "title": "偽記憶警報：孩子不是在說謊", "brain": "記憶再鞏固與自動補遺。", "metaphor": "有損壓縮與生成式 AI 幻覺", "example": "記憶會被覆寫。孩子記得的事可能被想像或父母暗示自動補遺了，在他們硬體裡那是「真的」。"}, {"code": "PD-12", "title": "拆解「不可能」：解除系統限制器", "brain": "網狀激活系統 (RAS) 與覺醒。", "metaphor": "限制器解除 (Limiter Release)", "example": "當孩子說「我做不到」，那是系統的限制器在報警。引導孩子質疑這句「不可能」，是覺醒與超越自我的開始。"}]}, "tools": [{"tool_code": "MAIN-01", "tool_name": "幸福教養概念館", "tool_type": "系統入口", "core_function": "所有教養工具與影片入口", "scenario_type": "全情境", "pwa_url": "https://angel0973180707.github.io/angel-happy-paw/", "dev_status": "已存在", "notes": "AI工具導航入口", "use_timing": "當需要快速找到適合工具時", "tool_one_liner": "一站式幸福教養工具入口", "long_video_cta": "完整版工具教學請至概念館查看", "shorts_cta": "點我快速找到適合你的工具", "cta_template": "【工具入口】立即前往幸福教養概念館"}, {"tool_code": "MIX-01", "tool_name": "心靈淨化", "tool_type": "心理清理", "core_function": "清空雜念與情緒壓力", "scenario_type": "焦慮,情緒過載", "pwa_url": "https://angel0973180707.github.io/Angel-inner-clean/", "dev_status": "已存在", "notes": "情緒重置工具", "use_timing": "情緒卡住與思緒過載時", "tool_one_liner": "幫心裡做一次深呼吸與清理", "long_video_cta": "完整教學與陪伴練習請見概念館", "shorts_cta": "現在就幫自己鬆一下", "cta_template": "【情緒清理】今天先讓心安靜一下"}, {"tool_code": "MIX-02", "tool_name": "情緒急救", "tool_type": "情緒急救", "core_function": "情緒爆發時快速降溫", "scenario_type": "情緒爆炸", "pwa_url": "https://angel0973180707.github.io/angel-happy-m1/", "dev_status": "已存在", "notes": "緊急情緒工具", "use_timing": "情緒快炸開時", "tool_one_liner": "先穩住情緒再處理事情", "long_video_cta": "完整情緒急救流程請至概念館", "shorts_cta": "3分鐘幫自己降溫", "cta_template": "【情緒急救】先穩住，再處理"}, {"tool_code": "EQ-01", "tool_name": "心靈調味師", "tool_type": "情緒理解", "core_function": "辨識與命名情緒", "scenario_type": "情緒轉化", "pwa_url": "https://angel0973180707.github.io/angel-inner-seasoning/", "dev_status": "已存在", "notes": "情緒理解工具", "use_timing": "不知道自己怎麼了時", "tool_one_liner": "幫情緒找到名字與出口", "long_video_cta": "更多情緒理解技巧請至概念館", "shorts_cta": "你現在的感受叫什麼", "cta_template": "【情緒理解】學會聽懂自己的心"}, {"tool_code": "EQ-02", "tool_name": "五感覺察", "tool_type": "情緒穩定", "core_function": "透過五感回到當下", "scenario_type": "焦慮,壓力", "pwa_url": "https://angel0973180707.github.io/Angel-Breath/", "dev_status": "已存在", "notes": "身心穩定工具", "use_timing": "焦慮失控與想太多時", "tool_one_liner": "用五感把自己帶回現在", "long_video_cta": "完整五感練習請至概念館", "shorts_cta": "回到身體就回到自己", "cta_template": "【五感覺察】讓大腦慢慢安靜下來"}, {"tool_code": "EQ-03", "tool_name": "心懂OK蹦", "tool_type": "關係修復", "core_function": "解碼情緒與需求", "scenario_type": "親子衝突", "pwa_url": "https://angel0973180707.github.io/angel-lucky/", "dev_status": "已存在", "notes": "關係修復工具", "use_timing": "吵架與誤解後", "tool_one_liner": "看懂彼此情緒與需求", "long_video_cta": "更多親子修復方法請至概念館", "shorts_cta": "不是對錯，是彼此卡住了", "cta_template": "【關係修復】把受傷的心慢慢接回來"}, {"tool_code": "COM-01", "tool_name": "反應選擇", "tool_type": "溝通轉譯", "core_function": "把衝動反應變成選擇", "scenario_type": "親子衝突", "pwa_url": "https://angel0973180707.github.io/angel-change-pwa/", "dev_status": "已存在", "notes": "溝通工具", "use_timing": "想吼人與情緒反射時", "tool_one_liner": "把情緒反應轉成選擇能力", "long_video_cta": "完整溝通技巧請至概念館", "shorts_cta": "先停一下再回應", "cta_template": "【溝通轉譯】反應前先給自己3秒"}, {"tool_code": "ACT-01", "tool_name": "財商練功", "tool_type": "金錢教育", "core_function": "建立儲蓄與消費觀念", "scenario_type": "零用錢教育", "pwa_url": "https://angel0973180707.github.io/happy-pocket-v1.6.2/", "dev_status": "已存在", "notes": "財商訓練工具", "use_timing": "孩子開始接觸金錢時", "tool_one_liner": "從生活中建立金錢觀", "long_video_cta": "完整財商教養請至概念館", "shorts_cta": "讓孩子學會跟錢相處", "cta_template": "【財商練功】從小培養金錢智慧"}, {"tool_code": "ACT-02", "tool_name": "自主啟動", "tool_type": "自主能力", "core_function": "培養孩子自律與行動力", "scenario_type": "拖延,責任感", "pwa_url": "https://www.canva.com/design/DAG6sVjMh-Q/", "dev_status": "已存在", "notes": "行動力訓練", "use_timing": "孩子拖延與被動時", "tool_one_liner": "幫孩子建立自主啟動力", "long_video_cta": "完整自主訓練請至概念館", "shorts_cta": "不是逼，是讓孩子願意動", "cta_template": "【自主啟動】讓孩子從被動變主動"}, {"tool_code": "KIDS-01", "tool_name": "快樂芒果", "tool_type": "低齡學習", "core_function": "提升低年級專注與學習動機", "scenario_type": "低齡學習", "pwa_url": "https://angel0973180707.github.io/happy-mango/", "dev_status": "已存在", "notes": "親子學習工具", "use_timing": "孩子不專心與排斥學習時", "tool_one_liner": "把學習變成快樂體驗", "long_video_cta": "完整學習引導請至概念館", "shorts_cta": "快樂才會想學", "cta_template": "【低齡學習】把學習變成孩子想玩的事"}, {"tool_code": "REL-02", "tool_name": "校園危機處理", "tool_type": "校園關係", "core_function": "校園衝突角色定位與處理", "scenario_type": "校園衝突", "pwa_url": "https://bit.ly/44tr2a5", "dev_status": "已存在", "notes": "校園事件工具", "use_timing": "遇到校園衝突時", "tool_one_liner": "快速梳理角色與事件脈絡", "long_video_cta": "完整校園應對請至概念館", "shorts_cta": "先理解，再處理", "cta_template": "【校園危機】幫孩子安全度過衝突"}, {"tool_code": "MAIN-02", "tool_name": "智多星", "tool_type": "AI導航", "core_function": "AI智慧搜尋教養工具", "scenario_type": "工具搜尋", "pwa_url": "https://angel0973180707.github.io/test-bot/", "dev_status": "已存在", "notes": "AI助手", "use_timing": "不知道該用哪個工具時", "tool_one_liner": "AI幫你快速找到答案", "long_video_cta": "更多智慧工具請至概念館", "shorts_cta": "不知道從哪開始也沒關係", "cta_template": "【AI導航】讓AI幫你找到方向"}]};
+const STORIES=DB.stories;
+const INSIGHTS=DB.insights;
+const DECODES=DB.decodes;
+const TOOLS=DB.tools;
+
+const TOOL_MAP={'情緒爆炸':['MIX-02','EQ-01','EQ-02'],'親子衝突':['COM-01','EQ-03','MIX-01'],'拖延責任感':['ACT-02','MAIN-01','EQ-02'],'成績焦慮':['EQ-03','COM-01','EQ-02'],'自信不足':['EQ-03','ACT-02','MIX-01'],'手足關係':['EQ-03','COM-01','MIX-01'],'同儕壓力':['EQ-03','KIDS-01','COM-01'],'自主學習':['ACT-02','EQ-02','MAIN-01'],'家庭情緒氛圍':['MIX-01','EQ-01','EQ-02'],'挫折復原':['EQ-03','ACT-02','MIX-01']};
+const TN=Object.fromEntries(TOOLS.map(t=>[t.tool_code,t.tool_name]));
+const TU=Object.fromEntries(TOOLS.map(t=>[t.tool_code,t.pwa_url]));
+const TOOL_LINE=Object.fromEntries(TOOLS.map(t=>[t.tool_code,t.tool_one_liner]));
+const TOOL_CTA_LONG=Object.fromEntries(TOOLS.map(t=>[t.tool_code,t.long_video_cta]));
+const TOOL_CTA_SHORT=Object.fromEntries(TOOLS.map(t=>[t.tool_code,t.shorts_cta]));
+const STYLES={watercolor_relax:'soft watercolor painting, relaxing calming mood, pastel lavender and sage green tones, flowing brushstrokes, gentle light, lots of white space, therapeutic aesthetic',tech_line:'clean line art illustration, modern minimal style, soft blue and white palette, subtle geometric elements, scientific diagram feel',warm_book:'warm watercolor children book illustration, cozy family scene, soft golden yellow and blush tones, heartwarming safe atmosphere',minimal_quote:'ultra minimal poster design, elegant typography space, warm cream background, single accent color, lots of negative space',impact_thumb:'bold high contrast thumbnail, warm dark background, bright golden accent, strong visual hierarchy, eye-catching',brand_warm:'warm brand illustration, golden cream palette, consistent style, professional yet approachable, small angel motif'};
+const RATIOS={'16:9':'--ar 16:9','9:16':'--ar 9:16','1:1':'--ar 1:1','1.91:1':'--ar 191:100'};
+let notes=JSON.parse(localStorage.getItem('angel_notes')||'[]');
+let curStyle='watercolor_relax';
+let curSheet='stories_db';
+
+function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function saveNote(){const t=document.getElementById('qnote').value.trim();if(!t)return;const type=document.querySelector('#note_chips .chip.on')?.textContent.trim()||'💡';notes.unshift({id:Date.now(),text:t,type,time:new Date().toLocaleString('zh-TW',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})});localStorage.setItem('angel_notes',JSON.stringify(notes));document.getElementById('qnote').value='';renderNotes();}
+function delNote(id){notes=notes.filter(n=>n.id!==id);localStorage.setItem('angel_notes',JSON.stringify(notes));renderNotes();}
+function renderNotes(){const el=document.getElementById('notes_list');if(!notes.length){el.innerHTML='<div style="font-size:.78rem;color:var(--ink3);padding:8px;">還沒有記錄，隨手記下第一個感悟 ✏️</div>';return;}el.innerHTML=notes.slice(0,15).map(n=>`<div class="note-item"><div class="note-text"><span style="font-size:.68rem;color:var(--gold);margin-right:6px;">${esc(n.type)}</span>${esc(n.text)}</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;"><span class="note-meta">${esc(n.time)}</span><button class="note-del" onclick="delNote(${n.id})">刪除</button></div></div>`).join('');}
+
+function buildSG(id){const el=document.getElementById(id);if(!el)return;el.innerHTML=STORIES.map(s=>`<div class="scard" onclick="toggleS(this,'${id}')" data-id="${s.id}" data-title="${esc(s.title)}" data-quote="${esc(s.quote)}" data-brain="${esc(s.brain)}" data-psych="${esc(s.psych)}" data-summary="${esc(s.summary)}" data-tag="${esc(s.tag)}"><div class="scard-num">ID ${s.id}</div><div class="scard-title">${esc(s.title)}</div><div class="scard-tag">${esc(s.tag)}</div></div>`).join('');}
+function toggleS(el,grid){el.classList.toggle('on');if(grid==='p1_sg'&&el.classList.contains('on')){document.getElementById('story_preview').style.display='block';document.getElementById('story_preview_content').textContent=`📖 ${el.dataset.title}\n\n摘要：${el.dataset.summary}\n\n💬 金句：${el.dataset.quote}\n\n🧠 腦科學：${el.dataset.brain}\n\n💡 心理學：${el.dataset.psych}`;}}
+function getS(grid){return[...document.querySelectorAll(`#${grid} .scard.on`)].map(e=>({id:e.dataset.id,title:e.dataset.title,quote:e.dataset.quote,brain:e.dataset.brain,psych:e.dataset.psych,summary:e.dataset.summary,tag:e.dataset.tag}));}
+function filterStories(){const q=document.getElementById('story_search').value.toLowerCase();document.querySelectorAll('#p1_sg .scard').forEach(c=>{const hay=[c.dataset.title,c.dataset.summary,c.dataset.quote,c.dataset.brain,c.dataset.psych,c.dataset.tag].join(' ').toLowerCase();c.style.display=hay.includes(q)?'':'none';});}
+
+const imgSel=document.getElementById('img_sel');STORIES.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=s.title;imgSel.appendChild(o);});
+function fillImg(){const s=STORIES.find(x=>x.id==document.getElementById('img_sel').value);if(!s)return;document.getElementById('img_scene').value=s.summary;document.getElementById('img_quote').value=s.quote;}
+
+function buildDG(type){document.getElementById('decode_grid').innerHTML=DECODES[type].map(d=>`<div class="icard" onclick="showDecode('${type}','${d.code}')"><div class="icard-code">${d.code}｜${esc(d.metaphor)}</div><div class="icard-title">${esc(d.title)}</div></div>`).join('');}
+function showDecode(type,code){const d=DECODES[type].find(x=>x.code===code);if(!d)return;document.getElementById('decode_preview').style.display='block';document.getElementById('decode_preview_content').textContent=`${d.code}｜${d.title}\n\n腦機制：${d.brain}\n\n系統比喻：${d.metaphor}\n\n生活例子：${d.example||''}`;}
+function switchDecode(t,el){document.querySelectorAll('#decode_tab .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');buildDG(t);}
+
+function buildIG(f){const data=f==='all'?INSIGHTS:INSIGHTS.filter(i=>i.main===f);document.getElementById('insight_grid').innerHTML=data.map(i=>`<div class="icard" onclick="this.classList.toggle('on')"><div class="icard-code">${i.code}｜${esc(i.sub)}</div><div class="icard-title">${esc(i.title)}</div></div>`).join('');}
+function filterInsight(f,el){document.querySelectorAll('#insight_filter .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');buildIG(f);}
+
+function buildTools(){document.getElementById('tool_grid').innerHTML=TOOLS.map(t=>`<div class="tool-card"><div class="icard-code">${t.tool_code}｜${esc(t.tool_type)}</div><div class="icard-title">${esc(t.tool_name)}</div><div style="font-size:.72rem;color:var(--ink3);line-height:1.6;margin-top:5px;">${esc(t.tool_one_liner)}<br><a href="${esc(t.pwa_url)}" target="_blank">開啟工具 ↗</a></div></div>`).join('');}
+
+function sw(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.ntab').forEach(b=>b.classList.remove('on'));document.getElementById(id).classList.add('on');btn.classList.add('on');}
+function tchip(el){el.classList.toggle('on');}
+function tplat(el){el.classList.toggle('on');}
+function selSty(el,k){document.querySelectorAll('.style-card').forEach(c=>c.classList.remove('on'));el.classList.add('on');curStyle=k;}
+function switchHatch(d){document.getElementById('hfw').classList.toggle('on',d==='fw');document.getElementById('hbw').classList.toggle('on',d==='bw');document.getElementById('hfw_panel').style.display=d==='fw'?'':'none';document.getElementById('hbw_panel').style.display=d==='bw'?'':'none';}
+function switchTask(id,el){document.querySelectorAll('#task_tabs .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');['t1','t2','t3','t4','t5'].forEach(t=>document.getElementById('tt'+t).style.display=t===id?'':'none');}
+function switchSheet(name,el){document.querySelectorAll('#sheet_tabs .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');curSheet=name;const steps={stories_db:'欄位：id | title | summary | parenting_quote | brain_science | psychology | content_type | emotion_type | scenario_type | tags | status\n步驟：開啟stories_db分頁 → 找最後一列 → 依欄位貼入',insight_library:'欄位：id | serial_no | title | main_theme | sub_theme | summary | content | tags | status\n步驟：開啟insight_library分頁 → 找對應R-code列 → 填入空白欄位',weekly_plan:'欄位：week_no | weekly_theme | tue_insight | thu_brain_science | sat_story | story_ids | redirect_tool | video_priority | publish_status\n步驟：開啟weekly_plan分頁 → 新增一列 → 填入週次資料',long_video:'欄位：week_no | video_type | content_id | video_title | core_message | script_outline | ai_image_prompt | redirect_tool | publish_status | ai_prompt | ai_long_copy | video_url\n步驟：開啟long_video分頁 → 新增一列 → 填入腳本資料',shorts:'欄位：long_video_id | shorts_type | version | shorts_title | shorts_core_line | hook_3s | story_point | ending_cta | redirect_tool | publish_status\n步驟：開啟shorts分頁 → 新增三列（三版本）→ 填入Shorts資料',publish_content:'欄位：content_id | platform | title | full_caption | short_caption | hashtags | cta_redirect | redirect_url | publish_status | publish_date\n步驟：開啟publish_content分頁 → 各平台新增一列',tools_db:'欄位：tool_code | tool_name | tool_type | core_function | scenario_type | pwa_url | dev_status | notes | tool_one_liner | long_video_cta | shorts_cta\n步驟：開啟tools_db分頁 → 新增一列填入新工具資料',course_db:'欄位：id | title | type | status | audience | summary | objectives | outline | materials | notes\n步驟：開啟course_db分頁 → 新增一列填入課程資料',knowledge_draft:'欄位：id | source_content_id | source_type | draft_type | title | content | tags | status | note\n步驟：開啟knowledge_draft分頁 → 新增一列儲存草稿'};document.getElementById('fill_steps').textContent=steps[name]||'請參考試算表欄位結構';}
+function cp(id){const el=document.getElementById(id);if(!el)return;navigator.clipboard.writeText(el.innerText||el.textContent).then(()=>{const btn=el.closest('.out-box,.nb,.sh,.cc')?.querySelector('.cbtn');if(btn){const old=btn.textContent;btn.textContent='已複製 ✓';btn.classList.add('done');setTimeout(()=>{btn.textContent=old;btn.classList.remove('done');},1500);}});}
+
+function getTopInsights(text,n=5){const keys=text.split(/\s|，|、|,|。|｜|：/).filter(Boolean);return INSIGHTS.map(i=>{const body=(i.main+i.sub+i.title);let score=keys.reduce((a,k)=>a+(body.includes(k)?2:0),0); if(text.includes(i.sub))score+=3; if(text.includes(i.main))score+=2; return {...i,score};}).sort((a,b)=>b.score-a.score).slice(0,n);}
+function allDecodes(){return Object.entries(DECODES).flatMap(([type,arr])=>arr.map(x=>({...x,type})));}
+function getTopDecodes(text,n=5){const keys=text.split(/\s|，|、|,|。|｜|：/).filter(Boolean);return allDecodes().map(d=>{const body=(d.title+d.brain+d.metaphor+(d.example||''));let score=keys.reduce((a,k)=>a+(body.includes(k)?2:0),0); return {...d,score};}).sort((a,b)=>b.score-a.score).slice(0,n);}
+function getTopStories(text,n=6){const keys=text.split(/\s|，|、|,|。|｜|：/).filter(Boolean);return STORIES.map(s=>{const body=(s.title+s.summary+s.quote+s.brain+s.psych+s.tag);let score=keys.reduce((a,k)=>a+(body.includes(k)?2:0),0); return {...s,score};}).sort((a,b)=>b.score-a.score).slice(0,n);}
+function selectedText(grid){const s=getS(grid);return s.length?s.map(x=>`${x.title}｜${x.summary}｜${x.quote}`).join('\n'):'未選擇';}
+
+function runHatch(dir){
+  if(dir==='fw'){
+    const input=document.getElementById('fw_input').value.trim();
+    const stories=getS('fw_sg');
+    const src=input||(stories.length?stories.map(s=>`${s.title}：${s.summary}`).join('\n'):'（請輸入感悟或選擇故事）');
+    const topI=getTopInsights(src,5).map(i=>`${i.code}｜${i.title}`).join('\n');
+    const topD=getTopDecodes(src,5).map(d=>`${d.code}｜${d.title}｜${d.metaphor}`).join('\n');
+    const topT=TOOLS.slice(0,12).map(t=>`${t.tool_code}｜${t.tool_name}｜${t.core_function}｜${t.tool_one_liner}`).join('\n');
+    document.getElementById('fw_p1').textContent=`你是「小天使笑長」內容策略師，25年國小教師，融合腦神經科學×心理學×正向教養。\n\n【素材輸入】\n${src}\n\n【系統已推薦金句】\n${topI}\n\n【系統已推薦解碼】\n${topD}\n\n【現有工具庫】\n${topT}\n\n請分析：\n1. 這個素材的核心情感需求是什麼？\n2. 對應哪些腦科學機制？\n3. 現有工具中哪些最相關？\n4. 還缺少什麼工具？用戶在什麼情境下找不到對應工具？\n5. 這個素材最適合切成哪3種影片角度？\n\n請用繁體中文，溫暖專業的語氣回覆。`;
+    document.getElementById('fw_p2').textContent=`根據以下素材，請孵化一個新的PWA教養工具構想：\n\n【素材】${src}\n\n請輸出：\n工具名稱、工具代碼、工具類型、核心功能、使用時機、核心體驗流程、工具一句話介紹、長片CTA文案、Shorts CTA文案。\n\n品牌要求：溫暖、不說教、點開就能用、陪大人先穩住自己。`;
+    document.getElementById('fw_nb').textContent=`正向孵化 NotebookLM 協作指令\n\n素材：${src}\n\n請從知識庫找出：\n①最相關腦科學理論\n②對應心理學流派\n③最匹配R-code金句\n④新工具核心功能建議\n⑤最佳導流故事與Shorts切角`;
+    document.getElementById('fw_sh').textContent=`tool_code\ttool_name\ttool_type\tcore_function\tscenario_type\tpwa_url\tdev_status\tnotes\ttool_one_liner\tlong_video_cta\tshorts_cta\n（新代碼）\t（工具名）\t（類型）\t（功能）\t（情境）\t（待開發）\t構想中\t從「${src.slice(0,15)}」孵化\t（一句話）\t（長片CTA）\t（Shorts CTA）`;
+    document.getElementById('fw_out').classList.add('on');
+  } else {
+    const [code,name,func]=document.getElementById('bw_tool').value.split('|');
+    const goal=document.getElementById('bw_goal').value;
+    const q=name+func+goal;
+    const topS=getTopStories(q,8).map(s=>`・${s.id}｜${s.title}：${s.quote}`).join('\n');
+    const topI=getTopInsights(q,8).map(i=>`・${i.code}｜${i.title}`).join('\n');
+    const topD=getTopDecodes(q,6).map(d=>`・${d.code}｜${d.title}：${d.example||d.metaphor}`).join('\n');
+    document.getElementById('bw_p1').textContent=`你是「小天使笑長」內容策略師。\n\n【工具】${code} ${name}（${func}）\n【目標】${goal}\n\n【系統推薦故事】\n${topS}\n\n【系統推薦金句】\n${topI}\n\n【系統推薦解碼】\n${topD}\n\n請輸出：\n1. 最佳故事配對前5名（說明為何適合）\n2. 最佳療癒金句配對5個\n3. 最佳腦科學解碼搭配\n4. 建議影片Hook開場句3個版本`;
+    document.getElementById('bw_p2').textContent=`請規劃以「${code} ${name}」為核心的6週內容矩陣：\n每週包含：週次、主題、週二感悟、週四腦科學、週六教養故事、Shorts三版本、CTA。\n\n工具一句話：${TOOL_LINE[code]||''}\n工具連結：${TU[code]||''}`;
+    document.getElementById('bw_nb').textContent=`反向孵化 NotebookLM 協作指令\n\n工具：${code} ${name}（${func}）\n目標：${goal}\n\n請找出最佳故事、金句、腦科學解碼、6週內容矩陣、最佳Shorts格式。`;
+    document.getElementById('bw_out').classList.add('on');
+  }
+}
+
+function genP(task){
+  document.getElementById(task+'_out').classList.add('on');
+  if(task==='t1'){
+    const sc=document.getElementById('t1_sc').value, wt=document.getElementById('t1_wt').value, st=getS('t1_sg');
+    const ang=[...document.querySelectorAll('#tt1 .chips .chip.on')].map(c=>c.textContent.trim()).join('、');
+    const stTxt=st.length?st.map(s=>`・${s.title}\n  金句：${s.quote}\n  腦科學：${s.brain}\n  心理學：${s.psych}`).join('\n\n'):'（請選擇故事素材）';
+    const extraI=getTopInsights(sc+stTxt,3).map(i=>`${i.code}｜${i.title}`).join('\n');
+    const extraD=getTopDecodes(sc+stTxt,3).map(d=>`${d.code}｜${d.title}`).join('\n');
+    document.getElementById('t1_p').textContent=`你是「小天使笑長」AI影音工廠的內容策劃師。\n品牌核心：陪大人先穩住自己，用腦神經科學×心理學×生活故事，把幸福教養走成一條長久的路。\n\n【情境類型】${sc}\n【週次主題】${wt}\n【選用故事素材】\n${stTxt}\n【切入角度】${ang||'完整故事版'}\n\n【推薦金句】\n${extraI}\n\n【推薦解碼】\n${extraD}\n\n請產出：本週主題定位、素材串接邏輯、核心金句、影片開場建議、同素材3個延伸角度。`;
+    document.getElementById('t1_nb').textContent=`任務一 NotebookLM 協作指令\n\n情境：${sc} | 週次：${wt}\n故事素材：${st.map(s=>s.title).join('、')||'待選'}\n\n請從知識庫提取相關腦科學、心理學、R-code金句、decode主題、影片延伸方向。`;
+    const tools=TOOL_MAP[sc]||['EQ-03','COM-01','MIX-01'];
+    document.getElementById('t1_tools').innerHTML=tools.map((t,i)=>`<span class="tc ${i===0?'main':'sub'}">${i===0?'主推':'搭配'}：${t} ${TN[t]||t}</span>`).join('');
+    document.getElementById('t1_sh').textContent=`week_no\tweekly_theme\tcontent\tstory_ids\tredirect_tool\tpublish_status\nW01\t${sc}\t${st.map(s=>s.title).join('、')||'待填'}\t${st.map(s=>s.id).join('、')||'待填'}\t${tools[0]}\t草稿`;
+  }
+  if(task==='t2'){
+    const wk=document.getElementById('t2_wk').value||'W01', tp=document.getElementById('t2_tp').value, core=document.getElementById('t2_core').value||'大人先穩住，孩子才能安全著陸', tool=document.getElementById('t2_tool').value, st=getS('t2_sg');
+    const stTxt=st.map(s=>`・${s.title}（${s.quote}）`).join('\n')||'（請選擇故事素材）';
+    document.getElementById('t2_p').textContent=`你是「小天使笑長」影片腳本師。\n\n【週次】${wk}｜【類型】${tp}\n【故事素材】\n${stTxt}\n【核心訊息】${core}\n【導流工具】${tool} ${TN[tool]||tool}｜${TOOL_LINE[tool]||''}\n連結：${TU[tool]||'[工具連結]'}\n\n請生成完整長片口播腳本：片頭、故事段、腦科學解析、心理學解析、情境練習、片尾CTA。`;
+    document.getElementById('t2_m').textContent=`請為YouTube影片生成：標題5個、影片說明、標籤15個、縮圖文字、章節標記。\n核心：${core}\n工具：${TU[tool]||'[工具連結]'}`;
+    document.getElementById('t2_nb').textContent=`任務二 NotebookLM 協作指令\n週次：${wk}｜類型：${tp}｜核心：${core}\n素材：${stTxt}\n請補充研究依據、理論、金句、decode搭配與知識點順序。`;
+    document.getElementById('t2_sh').textContent=`week_no\tvideo_type\tcontent_id\tvideo_title\tcore_message\tredirect_tool\tpublish_status\n${wk}\t${tp.split('｜')[0]}\t${wk}-L01\t（標題）\t${core}\t${tool}\t草稿`;
+  }
+  if(task==='t3'){
+    const lid=document.getElementById('t3_lid').value||'W01-L01', tool=document.getElementById('t3_tool').value, st=getS('t3_sg'), stTxt=st.map(s=>`・${s.title}：${s.quote}`).join('\n')||'（請選擇素材）';
+    document.getElementById('t3_p').textContent=`你是「小天使笑長」短影音爆款文案師。\n平台：Shorts/Reels/TikTok，9:16，60秒內。\n對應長片：${lid}\n素材：\n${stTxt}\n導流工具：${tool} ${TN[tool]||tool}｜${TOOL_CTA_SHORT[tool]||''}\n\n請生成三個版本：情緒共鳴版、腦科學知識版、場景代入版。每版含Hook、故事點、金句、CTA、字幕文字。`;
+    document.getElementById('t3_nb').textContent=`任務三 NotebookLM 協作指令\n長片ID：${lid}｜素材：${stTxt}\n請提取最強金句、腦科學比喻、常見場景、Hook與Shorts標題。`;
+    document.getElementById('t3_sh').textContent=`long_video_id\tshorts_type\tversion\tshorts_title\thook_3s\tstory_point\tending_cta\tredirect_tool\tpublish_status\n${lid}\t情緒共鳴版\tv1\t（標題）\t（Hook）\t（故事點）\t（CTA）\t${tool}\t草稿`;
+  }
+  if(task==='t4'){
+    const sum=document.getElementById('t4_sum').value||'（請輸入影片摘要）', plats=[...document.querySelectorAll('#tt4 .pchip.on')].map(p=>p.textContent.trim()), tool=document.getElementById('t4_tool').value, tone=document.getElementById('t4_tone').value;
+    document.getElementById('t4_p').textContent=`你是「小天使笑長」社群文案師。\n調性：${tone}\n內容摘要：${sum}\n導流工具：${tool} ${TN[tool]||tool}｜${TU[tool]||'[工具連結]'}\n平台：${plats.join('、')}\n\n請各生成完整說明文、短說明、Hashtag、留言置頂CTA。`;
+    document.getElementById('t4_nb').textContent=`任務四 NotebookLM 協作指令\n平台：${plats.join('、')}｜調性：${tone}｜摘要：${sum}\n請補充熱門hashtag、社群格式、發文時段、留言回覆模板。`;
+    document.getElementById('t4_sh').textContent=`content_id\tplatform\ttitle\tfull_caption\tshort_caption\thashtags\tcta_redirect\tredirect_url\tpublish_status\n（影片ID）\tYouTube\t（標題）\t（說明）\t（短說明）\t（標籤）\t${tool}\t${TU[tool]||'[連結]'}\t草稿`;
+  }
+  if(task==='t5'){
+    const tp=document.getElementById('t5_tp').value, au=document.getElementById('t5_au').value, goal=document.getElementById('t5_goal').value||'讓家長學會先穩住自己的情緒，再引導孩子', st=getS('t5_sg'), stTxt=st.map(s=>`・${s.title}（${s.quote}）`).join('\n')||'（請選擇故事素材）';
+    document.getElementById('t5_p').textContent=`你是「小天使笑長」課程規劃師。\n\n【課程類型】${tp}\n【目標受眾】${au}\n【核心目標】${goal}\n【核心故事素材】\n${stTxt}\n\n請生成課程總覽、核心能力架構、單元架構、每單元格式、課程成效指標。`;
+    document.getElementById('t5_nb').textContent=`任務五 NotebookLM 協作指令\n類型：${tp}｜受眾：${au}｜目標：${goal}\n素材：${stTxt}\n請補充理論、研究、差異化優勢、評量方式、PWA工具搭配時機。`;
+    document.getElementById('t5_sh').textContent=`id\ttitle\ttype\tstatus\taudience\tsummary\tobjectives\toutline\tnotes\n（自動）\t（課程名稱）\t${tp}\t草稿\t${au}\t（摘要）\t${goal}\t（大綱）\t（備註）`;
+  }
+}
+
+function genImg(){
+  const style=STYLES[curStyle]||STYLES.warm_book, scene=document.getElementById('img_scene').value||'親子溫馨互動場景', quote=document.getElementById('img_quote').value||'', ratio=document.getElementById('img_ratio').value, rc=RATIOS[ratio]||'--ar 16:9', types=[...document.querySelectorAll('#img_types .chip.on')].map(c=>c.textContent.trim());
+  let out='';
+  if(!types.length||types.includes('故事場景插畫（影片用）')) out+=`【故事場景插畫】比例：${ratio}\n\n主場景：\n${scene}, ${style}, no text, no watermark ${rc}\n\n特寫情緒：\nClose-up emotional scene, soft warm light, ${style}, no text ${rc}\n\n象徵畫面：\nSymbolic illustration of "${quote||scene}", metaphorical, ${style}, no text ${rc}\n\n結尾畫面：\nHopeful warm resolution scene, family moment, ${style}, no text ${rc}\n\n`;
+  if(types.includes('片頭／片尾圖卡')) out+=`【片頭/片尾圖卡】\nBrand card for 小天使笑長, warm golden cream palette, angel motif, elegant, no text ${rc}\n\n`;
+  if(types.includes('金句圖卡（IG用）')) out+=`【金句圖卡】\nMinimal watercolor wash background, soft pastels, calming, no text, quote card layout --ar 1:1\n（Canva加字：「${quote||'您的金句'}」）\n\n`;
+  if(types.includes('YouTube縮圖')) out+=`【YouTube縮圖】\n${scene}, bold YouTube thumbnail style, warm dark background, golden accent, eye-catching, no text --ar 16:9\n\n`;
+  if(types.includes('品牌問候分享圖')) out+=`【品牌問候分享圖】\nWarm morning scene, soft golden light, peaceful, small angel motif, brand style, cream gold palette, no text --ar 1:1\n\n`;
+  document.getElementById('img_p').textContent=out||'請選擇至少一種圖片類型'; document.getElementById('img_out').classList.add('on');
+}
+function genFill(){const input=document.getElementById('fill_in').value.trim();if(!input){document.getElementById('fill_r').textContent='請貼入Claude產出的內容';return;}document.getElementById('fill_r').textContent=`【${curSheet} 回填資料】\n更新時間：${new Date().toLocaleString('zh-TW')}\n\n${input}`;document.getElementById('fill_out').classList.add('on');}
+
+function genPub(){
+  const title=document.getElementById('pub_title').value||'影片標題', file=document.getElementById('pub_file').value||'/videos/video.mp4', desc=document.getElementById('pub_desc').value||'影片說明', tags=document.getElementById('pub_tags').value||'親子教養,正向教養', toolUrl=document.getElementById('pub_url').value||'https://angel0973180707.github.io/angel-happy-paw/', priv=document.getElementById('pub_priv').value, plats=[...document.querySelectorAll('#pub_plats .pchip.on')].map(p=>p.textContent.trim());
+  const fullDesc=`${desc}\n\n🛠️ 立即使用工具：${toolUrl}\n\n#親子教養 #正向教養 #小天使笑長 #腦科學 #情緒管理`;
+  if(plats.includes('YouTube 長片')){document.getElementById('pub_yt').textContent=`# YouTube 長片上傳指令\n影片：${file}\n標題：${title}\n隱私：${priv}\n說明：\n${fullDesc}\n標籤：${tags}\n\n請在 Claude Code 產生 Python YouTube Data API v3 上傳腳本。`;document.getElementById('pub_yt_b').style.display='';}
+  if(plats.includes('YouTube Shorts')){document.getElementById('pub_yts').textContent=`# YouTube Shorts 上傳指令\n影片：${file}\n標題：${title} #Shorts\n說明：${desc}\n工具：${toolUrl}\n格式：9:16，60秒內。`;document.getElementById('pub_yts_b').style.display='';}
+  if(plats.includes('Facebook')){document.getElementById('pub_fb').textContent=`# Facebook 發布指令\n標題：${title}\n影片：${file}\n文案：${fullDesc}\n請使用 Meta Graph API 上傳到粉專。`;document.getElementById('pub_fb_b').style.display='';}
+  if(plats.includes('Instagram Reels')){document.getElementById('pub_ig').textContent=`# Instagram Reels 發布指令\n標題：${title}\n影片：${file}\nCaption：${desc}\n工具：${toolUrl}\n請使用 Meta Graph API 發布 Reels。`;document.getElementById('pub_ig_b').style.display='';}
+  if(plats.includes('TikTok')){document.getElementById('pub_tt').textContent=`# TikTok 發布指令\n標題：${title}\n影片：${file}\nCaption：${title} #親子教養 #正向教養 #小天使笑長\n請使用 TikTok API 發布。`;document.getElementById('pub_tt_b').style.display='';}
+  document.getElementById('pub_out').classList.add('on');
+}
+
+function initToolSelects(){
+  const html=TOOLS.map(t=>`<option value="${t.tool_code}">${t.tool_code}｜${t.tool_name}</option>`).join('');
+  ['t2_tool','t3_tool','t4_tool'].forEach(id=>{const el=document.getElementById(id); if(el) el.innerHTML=html;});
+  const bw=TOOLS.map(t=>`<option value="${t.tool_code}|${t.tool_name}|${t.core_function}">${t.tool_code}｜${t.tool_name}</option>`).join('');
+  document.getElementById('bw_tool').innerHTML=bw;
+}
+renderNotes();
+['p1_sg','fw_sg','t1_sg','t2_sg','t3_sg','t5_sg'].forEach(buildSG);
+buildDG('emotion'); buildIG('all'); buildTools(); initToolSelects();
+switchSheet('stories_db',document.querySelector('#sheet_tabs .chip.on'));
+</script>
+</body>
+</html>
