@@ -3,1261 +3,913 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>小天使笑長｜AI影音工廠</title>
+<title>小天使笑長｜AI影音工廠 v2</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;600;900&family=Noto+Sans+TC:wght@300;400;500&display=swap');
-
-  :root {
-    --gold: #C9A96E;
-    --gold-light: #E8D5B0;
-    --gold-dark: #8B6914;
-    --cream: #FAF6F0;
-    --ink: #1A1208;
-    --ink-soft: #3D2E0F;
-    --sage: #7A9E7E;
-    --blush: #D4847A;
-    --bg: #F5EFE6;
-    --card: #FFFDF9;
-    --border: rgba(201,169,110,0.25);
-    --shadow: 0 4px 32px rgba(26,18,8,0.08);
-  }
-
-  * { margin:0; padding:0; box-sizing:border-box; }
-
-  body {
-    font-family: 'Noto Sans TC', sans-serif;
-    background: var(--bg);
-    color: var(--ink);
-    min-height: 100vh;
-  }
-
-  /* ── HEADER ── */
-  header {
-    background: var(--ink);
-    padding: 20px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky; top: 0; z-index: 100;
-    border-bottom: 1px solid var(--gold-dark);
-  }
-  .logo {
-    font-family: 'Noto Serif TC', serif;
-    font-weight: 900;
-    font-size: 1.1rem;
-    color: var(--gold);
-    letter-spacing: 0.05em;
-  }
-  .logo span { color: #fff; font-weight: 300; font-size: 0.8rem; display: block; letter-spacing: 0.15em; }
-  .header-badge {
-    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-    color: #fff;
-    font-size: 0.7rem;
-    padding: 4px 12px;
-    border-radius: 20px;
-    letter-spacing: 0.1em;
-  }
-
-  /* ── MAIN LAYOUT ── */
-  .factory {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 32px 20px 80px;
-  }
-
-  /* ── TASK TABS ── */
-  .task-tabs {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 28px;
-    overflow-x: auto;
-    padding-bottom: 4px;
-  }
-  .task-tabs::-webkit-scrollbar { height: 2px; }
-  .task-tabs::-webkit-scrollbar-thumb { background: var(--gold); }
-
-  .tab-btn {
-    flex-shrink: 0;
-    padding: 8px 18px;
-    border-radius: 24px;
-    border: 1.5px solid var(--border);
-    background: var(--card);
-    color: var(--ink-soft);
-    font-size: 0.82rem;
-    font-family: 'Noto Sans TC', sans-serif;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-  .tab-btn:hover { border-color: var(--gold); color: var(--gold-dark); }
-  .tab-btn.active {
-    background: var(--ink);
-    border-color: var(--ink);
-    color: var(--gold);
-    font-weight: 500;
-  }
-
-  /* ── TASK PANEL ── */
-  .task-panel { display: none; }
-  .task-panel.active { display: block; }
-
-  .panel-header {
-    margin-bottom: 24px;
-  }
-  .panel-title {
-    font-family: 'Noto Serif TC', serif;
-    font-size: 1.4rem;
-    font-weight: 900;
-    color: var(--ink);
-    margin-bottom: 6px;
-  }
-  .panel-title span { color: var(--gold); }
-  .panel-desc {
-    font-size: 0.85rem;
-    color: var(--ink-soft);
-    line-height: 1.7;
-  }
-
-  /* ── FORM GRID ── */
-  .form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 20px;
-  }
-  .form-grid.single { grid-template-columns: 1fr; }
-  @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
-
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .field label {
-    font-size: 0.78rem;
-    font-weight: 500;
-    color: var(--gold-dark);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .field select, .field input, .field textarea {
-    padding: 10px 14px;
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    background: var(--card);
-    font-family: 'Noto Sans TC', sans-serif;
-    font-size: 0.88rem;
-    color: var(--ink);
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .field select:focus, .field input:focus, .field textarea:focus {
-    border-color: var(--gold);
-  }
-  .field textarea { resize: vertical; min-height: 80px; }
-
-  /* ── STORY CARDS PICKER ── */
-  .story-picker {
-    margin-bottom: 20px;
-  }
-  .picker-label {
-    font-size: 0.78rem;
-    font-weight: 500;
-    color: var(--gold-dark);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-    display: block;
-  }
-  .story-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 10px;
-    max-height: 300px;
-    overflow-y: auto;
-    padding: 4px;
-  }
-  .story-card {
-    padding: 12px 14px;
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    background: var(--card);
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-  }
-  .story-card:hover { border-color: var(--gold); }
-  .story-card.selected {
-    border-color: var(--gold);
-    background: linear-gradient(135deg, #FFFDF9, #FDF5E6);
-  }
-  .story-card.selected::after {
-    content: '✓';
-    position: absolute;
-    top: 8px; right: 10px;
-    color: var(--gold);
-    font-weight: 700;
-    font-size: 0.85rem;
-  }
-  .story-num { font-size: 0.68rem; color: var(--gold); font-weight: 700; margin-bottom: 3px; }
-  .story-title { font-size: 0.82rem; font-weight: 500; color: var(--ink); line-height: 1.4; }
-  .story-tag { font-size: 0.7rem; color: var(--ink-soft); margin-top: 4px; opacity: 0.7; }
-
-  /* ── ANGLE CHIPS ── */
-  .chip-group { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-  .chip {
-    padding: 6px 14px;
-    border-radius: 20px;
-    border: 1.5px solid var(--border);
-    background: var(--card);
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: var(--ink-soft);
-  }
-  .chip:hover { border-color: var(--gold); }
-  .chip.selected { background: var(--gold); border-color: var(--gold); color: #fff; font-weight: 500; }
-
-  /* ── GENERATE BTN ── */
-  .gen-btn {
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, var(--ink), #2D1E08);
-    color: var(--gold);
-    border: none;
-    border-radius: 12px;
-    font-family: 'Noto Serif TC', serif;
-    font-size: 1rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    cursor: pointer;
-    transition: all 0.25s;
-    margin-top: 8px;
-    position: relative;
-    overflow: hidden;
-  }
-  .gen-btn::before {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(201,169,110,0.15), transparent);
-    transition: left 0.5s;
-  }
-  .gen-btn:hover::before { left: 100%; }
-  .gen-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(26,18,8,0.25); }
-  .gen-btn:active { transform: translateY(0); }
-  .gen-btn.loading { opacity: 0.7; pointer-events: none; }
-
-  /* ── OUTPUT AREA ── */
-  .output-area {
-    margin-top: 28px;
-    display: none;
-  }
-  .output-area.visible { display: block; }
-
-  .output-section {
-    background: var(--card);
-    border: 1.5px solid var(--border);
-    border-radius: 14px;
-    margin-bottom: 16px;
-    overflow: hidden;
-  }
-  .output-section-header {
-    padding: 12px 18px;
-    background: linear-gradient(135deg, #FAF3E8, var(--cream));
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .output-section-title {
-    font-family: 'Noto Serif TC', serif;
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--ink);
-  }
-  .copy-btn {
-    padding: 4px 12px;
-    border: 1px solid var(--gold);
-    border-radius: 12px;
-    background: transparent;
-    color: var(--gold-dark);
-    font-size: 0.72rem;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .copy-btn:hover { background: var(--gold); color: #fff; }
-  .copy-btn.copied { background: var(--sage); border-color: var(--sage); color: #fff; }
-
-  .output-content {
-    padding: 18px;
-    font-size: 0.88rem;
-    line-height: 1.9;
-    color: var(--ink-soft);
-    white-space: pre-wrap;
-  }
-
-  /* ── SHORTS GRID ── */
-  .shorts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 16px; }
-  @media (max-width: 600px) { .shorts-grid { grid-template-columns: 1fr; } }
-
-  .shorts-card {
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  .shorts-card-header {
-    padding: 8px 12px;
-    background: var(--ink);
-    color: var(--gold);
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-  }
-  .shorts-card-body {
-    padding: 12px;
-    font-size: 0.82rem;
-    line-height: 1.7;
-    color: var(--ink-soft);
-    white-space: pre-wrap;
-  }
-
-  /* ── LOADING SPINNER ── */
-  .spinner {
-    display: inline-block;
-    width: 16px; height: 16px;
-    border: 2px solid rgba(201,169,110,0.3);
-    border-top-color: var(--gold);
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    margin-right: 8px;
-    vertical-align: middle;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ── TOOL BADGE ── */
-  .tool-chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 16px; }
-  .tool-chip {
-    padding: 5px 12px;
-    border-radius: 16px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    border: 1px solid;
-  }
-  .tool-chip.main { background: #FDF0DC; border-color: var(--gold); color: var(--gold-dark); }
-  .tool-chip.sub { background: #F0F7F0; border-color: var(--sage); color: #3D6B41; }
-
-  /* ── NOTEBOOK PROMPT ── */
-  .notebook-box {
-    background: linear-gradient(135deg, #F0F4FF, #EBF0FF);
-    border: 1.5px solid #B8C8E8;
-    border-radius: 12px;
-    padding: 14px 18px;
-    margin-top: 12px;
-  }
-  .notebook-box-label {
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: #4A6FA5;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-  .notebook-box-content {
-    font-size: 0.84rem;
-    line-height: 1.8;
-    color: #2D3F60;
-    white-space: pre-wrap;
-  }
-
-  /* ── DIVIDER ── */
-  .divider { height: 1px; background: var(--border); margin: 24px 0; }
-
-  /* ── PLATFORM ROW ── */
-  .platform-row {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 16px;
-  }
-  .platform-chip {
-    padding: 6px 16px;
-    border-radius: 20px;
-    border: 1.5px solid var(--border);
-    background: var(--card);
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: var(--ink-soft);
-  }
-  .platform-chip.yt { --c: #FF0000; }
-  .platform-chip.fb { --c: #1877F2; }
-  .platform-chip.ig { --c: #E1306C; }
-  .platform-chip.tt { --c: #000000; }
-  .platform-chip.selected { background: var(--c,var(--gold)); border-color: var(--c,var(--gold)); color: #fff; }
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;600;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+:root{--gold:#C9A96E;--gold-l:#F0DEB8;--gold-d:#8B6914;--ink:#1A1208;--ink2:#3D2E0F;--ink3:#6B5230;--cream:#FAF6F0;--card:#FFFDF9;--bg:#F2EBE0;--sage:#7A9E7E;--blush:#D4847A;--border:rgba(201,169,110,0.22);--shadow:0 2px 20px rgba(26,18,8,0.07);--r:14px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;font-size:14px;}
+header{background:var(--ink);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;border-bottom:1px solid var(--gold-d);}
+.logo{font-family:'Noto Serif TC',serif;font-weight:900;font-size:1rem;color:var(--gold);}
+.logo small{display:block;color:rgba(255,255,255,0.5);font-size:0.65rem;font-weight:300;letter-spacing:0.12em;font-family:'Noto Sans TC',sans-serif;}
+.hbadge{background:linear-gradient(135deg,var(--gold),var(--gold-d));color:#fff;font-size:0.65rem;padding:3px 10px;border-radius:12px;}
+.nav{display:flex;gap:4px;padding:14px 16px 0;overflow-x:auto;background:var(--cream);border-bottom:1px solid var(--border);}
+.nav::-webkit-scrollbar{height:2px;}.nav::-webkit-scrollbar-thumb{background:var(--gold);}
+.ntab{flex-shrink:0;padding:8px 14px;border-radius:10px 10px 0 0;border:1.5px solid transparent;background:transparent;color:var(--ink3);font-size:0.78rem;font-family:'Noto Sans TC',sans-serif;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.ntab:hover{color:var(--gold-d);}
+.ntab.on{background:var(--card);border-color:var(--border);color:var(--ink);font-weight:700;}
+.main{max-width:900px;margin:0 auto;padding:20px 16px 80px;}
+.panel{display:none;animation:fi .25s ease;}.panel.on{display:block;}
+@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.stitle{font-family:'Noto Serif TC',serif;font-size:1.2rem;font-weight:900;color:var(--ink);margin-bottom:4px;}
+.stitle span{color:var(--gold);}
+.sdesc{font-size:0.8rem;color:var(--ink3);line-height:1.7;margin-bottom:20px;}
+.card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);margin-bottom:14px;overflow:hidden;box-shadow:var(--shadow);}
+.card-head{padding:11px 16px;background:linear-gradient(135deg,#FAF3E8,var(--cream));border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.card-title{font-family:'Noto Serif TC',serif;font-size:0.85rem;font-weight:700;color:var(--ink);}
+.card-body{padding:16px;}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.fgrid.x1{grid-template-columns:1fr;}.fgrid.x3{grid-template-columns:1fr 1fr 1fr;}
+@media(max-width:560px){.fgrid,.fgrid.x3{grid-template-columns:1fr;}}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:0.7rem;font-weight:700;color:var(--gold-d);letter-spacing:0.1em;text-transform:uppercase;}
+.field select,.field input,.field textarea{padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;background:var(--card);font-family:'Noto Sans TC',sans-serif;font-size:0.83rem;color:var(--ink);outline:none;transition:border-color .2s;}
+.field select:focus,.field input:focus,.field textarea:focus{border-color:var(--gold);}
+.field textarea{resize:vertical;min-height:72px;line-height:1.6;}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px;}
+.chip{padding:5px 12px;border-radius:16px;border:1.5px solid var(--border);background:var(--card);font-size:0.75rem;cursor:pointer;transition:all .18s;color:var(--ink3);user-select:none;}
+.chip:hover{border-color:var(--gold);}.chip.on{background:var(--gold);border-color:var(--gold);color:#fff;font-weight:700;}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;max-height:260px;overflow-y:auto;padding:2px;margin-bottom:14px;}
+.sgrid::-webkit-scrollbar{width:3px;}.sgrid::-webkit-scrollbar-thumb{background:var(--gold-l);}
+.scard{padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;background:var(--card);cursor:pointer;transition:all .18s;position:relative;}
+.scard:hover{border-color:var(--gold);}.scard.on{border-color:var(--gold);background:linear-gradient(135deg,#FFFDF9,#FDF5E6);}
+.scard.on::after{content:'✓';position:absolute;top:6px;right:8px;color:var(--gold);font-weight:700;font-size:0.8rem;}
+.scard-num{font-size:0.62rem;color:var(--gold);font-weight:700;margin-bottom:2px;}
+.scard-title{font-size:0.78rem;font-weight:500;color:var(--ink);line-height:1.35;}
+.scard-tag{font-size:0.65rem;color:var(--ink3);margin-top:3px;opacity:.7;}
+.igrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;max-height:200px;overflow-y:auto;padding:2px;margin-bottom:14px;}
+.icard{padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;background:var(--card);cursor:pointer;transition:all .18s;}
+.icard:hover{border-color:var(--sage);}.icard.on{border-color:var(--sage);background:#F0F7F1;}
+.icard-code{font-size:0.62rem;color:var(--sage);font-weight:700;margin-bottom:2px;}
+.icard-title{font-size:0.78rem;color:var(--ink);line-height:1.35;}
+.gbtn{width:100%;padding:13px;background:linear-gradient(135deg,var(--ink),#2D1E08);color:var(--gold);border:none;border-radius:11px;font-family:'Noto Serif TC',serif;font-size:0.95rem;font-weight:700;letter-spacing:0.08em;cursor:pointer;transition:all .22s;margin-top:6px;}
+.gbtn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(26,18,8,.22);}
+.out{margin-top:20px;display:none;}.out.on{display:block;}
+.out-box{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);margin-bottom:12px;overflow:hidden;}
+.out-head{padding:10px 16px;background:linear-gradient(135deg,#FAF3E8,var(--cream));border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.out-title{font-family:'Noto Serif TC',serif;font-size:0.83rem;font-weight:700;color:var(--ink);}
+.cbtn{padding:3px 10px;border:1px solid var(--gold);border-radius:10px;background:transparent;color:var(--gold-d);font-size:0.68rem;cursor:pointer;transition:all .18s;font-family:'Noto Sans TC',sans-serif;}
+.cbtn:hover{background:var(--gold);color:#fff;}.cbtn.done{background:var(--sage);border-color:var(--sage);color:#fff;}
+.out-content{padding:16px;font-size:0.83rem;line-height:1.9;color:var(--ink2);white-space:pre-wrap;}
+.nb{background:linear-gradient(135deg,#EEF3FF,#E8EFFF);border:1.5px solid #B5C8E8;border-radius:11px;padding:13px 16px;margin-top:10px;}
+.nb-label{font-size:0.68rem;font-weight:700;color:#4060A0;letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px;}
+.nb-content{font-size:0.8rem;line-height:1.8;color:#2D3F60;white-space:pre-wrap;}
+.sh{background:linear-gradient(135deg,#EDFDF0,#E4FAE8);border:1.5px solid #A8D8B0;border-radius:11px;padding:13px 16px;margin-top:10px;}
+.sh-label{font-size:0.68rem;font-weight:700;color:#2E7A3C;letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px;}
+.sh-content{font-size:0.78rem;line-height:1.8;color:#1A4D24;white-space:pre-wrap;font-family:monospace;}
+.cc{background:linear-gradient(135deg,#1A1208,#2D1E08);border:1.5px solid var(--gold-d);border-radius:11px;padding:13px 16px;margin-top:10px;}
+.cc-label{font-size:0.68rem;font-weight:700;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px;}
+.cc-content{font-size:0.78rem;line-height:1.8;color:#E8D5A8;white-space:pre-wrap;font-family:monospace;}
+.hatch-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+@media(max-width:480px){.hatch-grid{grid-template-columns:1fr;}}
+.hcard{padding:13px 15px;border:1.5px solid var(--border);border-radius:10px;background:var(--card);cursor:pointer;transition:all .2s;}
+.hcard:hover{border-color:var(--gold);transform:translateY(-1px);}.hcard.on{border-color:var(--gold);background:#FDF8EE;}
+.hcard-icon{font-size:1.4rem;margin-bottom:6px;}.hcard-title{font-size:0.83rem;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.hcard-desc{font-size:0.72rem;color:var(--ink3);line-height:1.5;}
+.prow{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;}
+.pchip{padding:6px 14px;border-radius:18px;border:1.5px solid var(--border);background:var(--card);font-size:0.78rem;cursor:pointer;transition:all .18s;color:var(--ink3);}
+.pchip.yt.on{background:#FF0000;border-color:#FF0000;color:#fff;}
+.pchip.fb.on{background:#1877F2;border-color:#1877F2;color:#fff;}
+.pchip.ig.on{background:#E1306C;border-color:#E1306C;color:#fff;}
+.pchip.tt.on{background:#000;border-color:#000;color:#fff;}
+.tc{padding:4px 11px;border-radius:14px;font-size:0.72rem;font-weight:500;border:1px solid;}
+.tc.main{background:#FDF0DC;border-color:var(--gold);color:var(--gold-d);}
+.tc.sub{background:#F0F7F0;border-color:var(--sage);color:#2E6B36;}
+.tcs{display:flex;flex-wrap:wrap;gap:7px;padding:12px 14px;}
+.div{height:1px;background:var(--border);margin:18px 0;}
+.qnote-area{display:flex;gap:8px;margin-bottom:14px;}
+.qnote-area textarea{flex:1;padding:10px 13px;border:1.5px solid var(--border);border-radius:10px;background:var(--card);font-family:'Noto Sans TC',sans-serif;font-size:0.83rem;color:var(--ink);outline:none;resize:none;height:70px;transition:border-color .2s;}
+.qnote-area textarea:focus{border-color:var(--gold);}
+.qnote-area .gbtn{width:80px;height:70px;padding:8px;font-size:0.75rem;}
+.notes-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;max-height:200px;overflow-y:auto;}
+.note-item{padding:10px 14px;background:var(--card);border:1.5px solid var(--border);border-radius:9px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.note-text{font-size:0.8rem;line-height:1.6;color:var(--ink2);flex:1;}
+.note-meta{font-size:0.65rem;color:var(--gold);white-space:nowrap;}
+.note-del{font-size:0.7rem;color:var(--blush);cursor:pointer;padding:2px 6px;border-radius:6px;border:1px solid var(--blush);background:transparent;flex-shrink:0;}
+.style-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:14px;}
+.style-card{padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;background:var(--card);cursor:pointer;transition:all .18s;text-align:center;}
+.style-card:hover{border-color:var(--gold);}.style-card.on{border-color:var(--gold);background:#FDF8EE;}
+.style-card-icon{font-size:1.4rem;margin-bottom:5px;}.style-card-name{font-size:0.75rem;font-weight:700;color:var(--ink);margin-bottom:2px;}
+.style-card-desc{font-size:0.65rem;color:var(--ink3);}
+.badge{padding:3px 9px;border-radius:10px;font-size:0.68rem;font-weight:700;letter-spacing:.06em;}
+.badge.gold{background:#FDF0DC;color:var(--gold-d);border:1px solid var(--gold-l);}
+.badge.green{background:#E8F5EA;color:#2E7A3C;border:1px solid #A8D8B0;}
+.badge.blue{background:#EEF3FF;color:#4060A0;border:1px solid #B5C8E8;}
 </style>
 </head>
 <body>
-
 <header>
-  <div class="logo">小天使笑長<span>AI 影音工廠 · 內容生產系統</span></div>
-  <div class="header-badge">五大任務</div>
+  <div class="logo">小天使笑長<small>AI 影音工廠 · 完整版 v2</small></div>
+  <div class="hbadge">提示詞產生器</div>
 </header>
+<div class="nav">
+  <button class="ntab on" onclick="sw('p1',this)">📦 素材區</button>
+  <button class="ntab" onclick="sw('p2',this)">🌱 孵化區</button>
+  <button class="ntab" onclick="sw('p3',this)">⚡ 生成區</button>
+  <button class="ntab" onclick="sw('p4',this)">🎨 繪圖指令</button>
+  <button class="ntab" onclick="sw('p5',this)">📋 回填區</button>
+  <button class="ntab" onclick="sw('p6',this)">🚀 發布指令</button>
+</div>
+<div class="main">
 
-<div class="factory">
-
-  <!-- TABS -->
-  <div class="task-tabs">
-    <button class="tab-btn active" onclick="switchTab('t1')">📦 任務一｜素材串接</button>
-    <button class="tab-btn" onclick="switchTab('t2')">🎬 任務二｜長片腳本</button>
-    <button class="tab-btn" onclick="switchTab('t3')">⚡ 任務三｜Shorts矩陣</button>
-    <button class="tab-btn" onclick="switchTab('t4')">📣 任務四｜多平台發文</button>
-    <button class="tab-btn" onclick="switchTab('t5')">🎓 任務五｜課程開發</button>
+<!-- P1 素材區 -->
+<div class="panel on" id="p1">
+  <div class="stitle">📦 素材區｜<span>記錄與管理</span></div>
+  <div class="sdesc">隨手記錄生活感悟，瀏覽故事庫、解碼庫與療癒金句。</div>
+  <div class="card">
+    <div class="card-head"><div class="card-title">✏️ 臨時感悟快速記錄</div></div>
+    <div class="card-body">
+      <div class="chips" id="note_chips">
+        <div class="chip on" onclick="tchip(this)">💡 生活觀察</div>
+        <div class="chip" onclick="tchip(this)">😤 情緒現場</div>
+        <div class="chip" onclick="tchip(this)">🧠 腦科學靈感</div>
+        <div class="chip" onclick="tchip(this)">💬 孩子說的話</div>
+        <div class="chip" onclick="tchip(this)">🌀 教養反思</div>
+        <div class="chip" onclick="tchip(this)">🎯 工具構想</div>
+      </div>
+      <div class="qnote-area">
+        <textarea id="qnote" placeholder="隨手記下這一刻的感悟、故事、觀察…"></textarea>
+        <button class="gbtn" onclick="saveNote()">存入<br>素材庫</button>
+      </div>
+      <div class="notes-list" id="notes_list"></div>
+    </div>
   </div>
-
-  <!-- ══════════════════════════════════════════════════
-       任務一：素材串接
-  ══════════════════════════════════════════════════ -->
-  <div class="task-panel active" id="t1">
-    <div class="panel-header">
-      <div class="panel-title">任務一｜<span>素材提取與主題串接</span></div>
-      <div class="panel-desc">從故事庫找靈感，將生活故事×腦科學×心理學×療癒金句串接成完整主題脈絡。</div>
-    </div>
-
-    <div class="form-grid">
-      <div class="field">
-        <label>情境類型</label>
-        <select id="t1_scenario">
-          <option value="">— 選擇情境 —</option>
-          <option>情緒爆炸</option>
-          <option>親子衝突</option>
-          <option>拖延責任感</option>
-          <option>成績焦慮</option>
-          <option>自信不足</option>
-          <option>手足關係</option>
-          <option>同儕壓力</option>
-          <option>自主學習</option>
-          <option>家庭情緒氛圍</option>
-          <option>挫折復原</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>週次主題</label>
-        <select id="t1_week_theme">
-          <option value="">— 選擇類型 —</option>
-          <option>週二｜詩詞×人生感悟</option>
-          <option>週四｜腦神經科學×生活理解</option>
-          <option>週六｜幸福教養故事</option>
-        </select>
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">📖 故事庫（47個）</div>
+      <div style="display:flex;gap:6px;">
+        <span class="badge gold">家庭篇</span>
+        <span class="badge green">校園篇</span>
+        <span class="badge blue">創作篇</span>
       </div>
     </div>
-
-    <span class="picker-label">選擇故事素材（可多選）</span>
-    <div class="story-grid" id="t1_story_grid"></div>
-
-    <div class="divider"></div>
-
-    <span class="picker-label">切入角度</span>
-    <div class="chip-group">
-      <div class="chip" onclick="toggleChip(this)">🎭 完整故事版</div>
-      <div class="chip" onclick="toggleChip(this)">💬 金句衝擊版</div>
-      <div class="chip" onclick="toggleChip(this)">🧠 腦科學解析版</div>
-      <div class="chip" onclick="toggleChip(this)">💡 心理學應用版</div>
-      <div class="chip" onclick="toggleChip(this)">🌀 大人反思版</div>
-      <div class="chip" onclick="toggleChip(this)">🎯 場景代入版</div>
-    </div>
-
-    <button class="gen-btn" onclick="runTask('t1')">⚡ 生成主題串接報告</button>
-
-    <div class="output-area" id="t1_output">
-      <div class="output-section">
-        <div class="output-section-header">
-          <div class="output-section-title">📦 主題串接報告</div>
-          <button class="copy-btn" onclick="copyOutput('t1_main_content')">複製</button>
-        </div>
-        <div class="output-content" id="t1_main_content"></div>
-      </div>
-      <div class="notebook-box">
-        <div class="notebook-box-label">📒 NotebookLM 協作指令</div>
-        <div class="notebook-box-content" id="t1_notebook"></div>
-      </div>
-      <div class="output-section" style="margin-top:16px;">
-        <div class="output-section-header">
-          <div class="output-section-title">🛠️ 推薦導流工具</div>
-        </div>
-        <div class="tool-chips" id="t1_tools"></div>
+    <div class="card-body">
+      <div class="field" style="margin-bottom:10px;"><input type="text" id="story_search" placeholder="搜尋故事…" oninput="filterStories()"></div>
+      <div class="sgrid" id="p1_sg"></div>
+      <div id="story_preview" style="display:none;" class="nb">
+        <div class="nb-label">📖 故事詳情</div>
+        <div class="nb-content" id="story_preview_content"></div>
       </div>
     </div>
   </div>
-
-  <!-- ══════════════════════════════════════════════════
-       任務二：長片腳本
-  ══════════════════════════════════════════════════ -->
-  <div class="task-panel" id="t2">
-    <div class="panel-header">
-      <div class="panel-title">任務二｜<span>長影片腳本生成</span></div>
-      <div class="panel-desc">依週次規範產出完整口播腳本、AI繪圖提示詞，及開拍字幕文字。</div>
-    </div>
-
-    <div class="form-grid">
-      <div class="field">
-        <label>週次</label>
-        <input type="text" id="t2_week" placeholder="例：W01">
+  <div class="card">
+    <div class="card-head"><div class="card-title">🧠 解碼庫（36個）</div></div>
+    <div class="card-body">
+      <div class="chips" id="decode_tab">
+        <div class="chip on" onclick="switchDecode('emotion',this)">情緒解碼 12</div>
+        <div class="chip" onclick="switchDecode('relation',this)">人際解碼 12</div>
+        <div class="chip" onclick="switchDecode('parenting',this)">教養解碼 12</div>
       </div>
-      <div class="field">
-        <label>影片類型</label>
-        <select id="t2_type">
-          <option>週二｜詩詞×感悟（3-5分鐘）</option>
-          <option>週四｜腦科學×生活（5-8分鐘）</option>
-          <option>週六｜教養故事（5-8分鐘）</option>
-        </select>
+      <div class="igrid" id="decode_grid"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head"><div class="card-title">💫 療癒金句庫（100個）</div></div>
+    <div class="card-body">
+      <div class="chips" id="insight_filter">
+        <div class="chip on" onclick="filterInsight('all',this)">全部</div>
+        <div class="chip" onclick="filterInsight('跟自己的關係',this)">跟自己</div>
+        <div class="chip" onclick="filterInsight('跟人的關係',this)">跟人</div>
+        <div class="chip" onclick="filterInsight('跟事的關係',this)">跟事</div>
+        <div class="chip" onclick="filterInsight('跟環境的關係',this)">跟環境</div>
       </div>
+      <div class="igrid" id="insight_grid"></div>
     </div>
+  </div>
+</div>
 
-    <span class="picker-label">選擇主要素材</span>
-    <div class="story-grid" id="t2_story_grid"></div>
-
-    <div class="divider"></div>
-
-    <div class="form-grid single">
-      <div class="field">
-        <label>核心訊息（一句話）</label>
-        <input type="text" id="t2_core" placeholder="例：大人先穩住自己，孩子才能安全著陸">
-      </div>
-    </div>
-
-    <div class="field" style="margin-bottom:20px;">
-      <label>導流工具</label>
-      <select id="t2_tool">
-        <option value="MIX-02">MIX-02｜情緒急救</option>
-        <option value="EQ-01">EQ-01｜心靈調味師</option>
-        <option value="EQ-02">EQ-02｜五感覺察</option>
-        <option value="EQ-03">EQ-03｜心懂OK蹦</option>
-        <option value="COM-01">COM-01｜反應選擇</option>
-        <option value="MIX-01">MIX-01｜心靈淨化</option>
-        <option value="ACT-01">ACT-01｜財商練功</option>
-        <option value="ACT-02">ACT-02｜自主啟動</option>
-        <option value="MAIN-01">MAIN-01｜幸福教養概念館</option>
-      </select>
-    </div>
-
-    <button class="gen-btn" onclick="runTask('t2')">🎬 生成長片腳本全包</button>
-
-    <div class="output-area" id="t2_output">
-      <div class="output-section">
-        <div class="output-section-header">
-          <div class="output-section-title">📝 長片口播腳本</div>
-          <button class="copy-btn" onclick="copyOutput('t2_script')">複製</button>
+<!-- P2 孵化區 -->
+<div class="panel" id="p2">
+  <div class="stitle">🌱 孵化區｜<span>雙向孵化配對</span></div>
+  <div class="sdesc">正向：素材→發現缺什麼工具。反向：工具→找最適合的素材。形成永不停止的內容閉環。</div>
+  <div class="hatch-grid">
+    <div class="hcard on" id="hfw" onclick="switchHatch('fw')"><div class="hcard-icon">➡️</div><div class="hcard-title">正向孵化</div><div class="hcard-desc">素材→工具構想<br>從故事/感悟孵化新工具</div></div>
+    <div class="hcard" id="hbw" onclick="switchHatch('bw')"><div class="hcard-icon">⬅️</div><div class="hcard-title">反向孵化</div><div class="hcard-desc">工具→素材配對<br>現有工具找最佳素材</div></div>
+  </div>
+  <div id="hfw_panel">
+    <div class="card">
+      <div class="card-head"><div class="card-title">➡️ 正向孵化：素材 → 工具構想</div></div>
+      <div class="card-body">
+        <div class="field fgrid x1" style="margin-bottom:12px;">
+          <div class="field"><label>輸入生活觀察或感悟</label><textarea id="fw_input" placeholder="例：今天孩子因為被比較而大哭，我突然發現大人自己也很怕被比較…"></textarea></div>
         </div>
-        <div class="output-content" id="t2_script"></div>
-      </div>
-      <div class="output-section">
-        <div class="output-section-header">
-          <div class="output-section-title">🎨 ChatGPT 畫圖指令</div>
-          <button class="copy-btn" onclick="copyOutput('t2_image')">複製</button>
+        <span style="font-size:0.72rem;font-weight:700;color:var(--gold-d);display:block;margin-bottom:8px;">或選擇故事素材</span>
+        <div class="sgrid" id="fw_sg"></div>
+        <button class="gbtn" onclick="runHatch('fw')">🌱 正向孵化：分析缺口＋產出工具構想提示詞</button>
+        <div class="out" id="fw_out">
+          <div class="out-box"><div class="out-head"><div class="out-title">🔍 素材分析提示詞</div><button class="cbtn" onclick="cp('fw_p1')">複製→貼到Claude</button></div><div class="out-content" id="fw_p1"></div></div>
+          <div class="out-box"><div class="out-head"><div class="out-title">🛠️ 工具孵化提示詞</div><button class="cbtn" onclick="cp('fw_p2')">複製→貼到Claude</button></div><div class="out-content" id="fw_p2"></div></div>
+          <div class="nb"><div class="nb-label">📒 NotebookLM 協作指令</div><div class="nb-content" id="fw_nb"></div></div>
+          <div class="sh"><div class="sh-label">📊 tools_db 回填欄位格式</div><div class="sh-content" id="fw_sh"></div></div>
         </div>
-        <div class="output-content" id="t2_image"></div>
-      </div>
-      <div class="output-section">
-        <div class="output-section-header">
-          <div class="output-section-title">🏷️ 影片標題＋說明＋標籤</div>
-          <button class="copy-btn" onclick="copyOutput('t2_meta')">複製</button>
-        </div>
-        <div class="output-content" id="t2_meta"></div>
-      </div>
-      <div class="notebook-box">
-        <div class="notebook-box-label">📒 NotebookLM 協作指令</div>
-        <div class="notebook-box-content" id="t2_notebook"></div>
       </div>
     </div>
   </div>
-
-  <!-- ══════════════════════════════════════════════════
-       任務三：Shorts矩陣
-  ══════════════════════════════════════════════════ -->
-  <div class="task-panel" id="t3">
-    <div class="panel-header">
-      <div class="panel-title">任務三｜<span>Shorts 矩陣生成</span></div>
-      <div class="panel-desc">一次生成三版本短影音文案，含Hook×故事點×CTA，可直接用於口播與字幕。</div>
-    </div>
-
-    <div class="form-grid">
-      <div class="field">
-        <label>對應長片ID</label>
-        <input type="text" id="t3_long_id" placeholder="例：W01-S01">
-      </div>
-      <div class="field">
-        <label>平台格式</label>
-        <select id="t3_platform">
-          <option>YouTube Shorts（60秒）</option>
-          <option>Instagram Reels（30秒）</option>
-          <option>TikTok（30秒）</option>
-          <option>Facebook（45秒）</option>
-        </select>
-      </div>
-    </div>
-
-    <span class="picker-label">選擇素材</span>
-    <div class="story-grid" id="t3_story_grid"></div>
-
-    <div class="divider"></div>
-
-    <span class="picker-label">Shorts版本類型</span>
-    <div class="chip-group">
-      <div class="chip selected" onclick="toggleChip(this)">💥 情緒共鳴版</div>
-      <div class="chip selected" onclick="toggleChip(this)">🧪 腦科學知識版</div>
-      <div class="chip selected" onclick="toggleChip(this)">🎯 場景代入版</div>
-    </div>
-
-    <div class="field" style="margin-bottom:20px; margin-top:16px;">
-      <label>結尾導流工具</label>
-      <select id="t3_tool">
-        <option value="MIX-02">MIX-02｜情緒急救</option>
-        <option value="EQ-03">EQ-03｜心懂OK蹦</option>
-        <option value="COM-01">COM-01｜反應選擇</option>
-        <option value="EQ-01">EQ-01｜心靈調味師</option>
-        <option value="MAIN-01">MAIN-01｜幸福教養概念館</option>
-      </select>
-    </div>
-
-    <button class="gen-btn" onclick="runTask('t3')">⚡ 一鍵生成 Shorts 矩陣</button>
-
-    <div class="output-area" id="t3_output">
-      <div class="output-section">
-        <div class="output-section-header">
-          <div class="output-section-title">📱 Shorts 三版本矩陣</div>
-          <button class="copy-btn" onclick="copyOutput('t3_all')">複製全部</button>
+  <div id="hbw_panel" style="display:none;">
+    <div class="card">
+      <div class="card-head"><div class="card-title">⬅️ 反向孵化：工具 → 素材配對</div></div>
+      <div class="card-body">
+        <div class="fgrid">
+          <div class="field"><label>選擇現有工具</label>
+            <select id="bw_tool">
+              <option value="MIX-01|心靈淨化|清空雜念與情緒壓力">MIX-01｜心靈淨化</option>
+              <option value="MIX-02|情緒急救|情緒爆發時快速降溫">MIX-02｜情緒急救</option>
+              <option value="EQ-01|心靈調味師|辨識與命名情緒">EQ-01｜心靈調味師</option>
+              <option value="EQ-02|五感覺察|透過五感回到當下">EQ-02｜五感覺察</option>
+              <option value="EQ-03|心懂OK蹦|解碼情緒與需求">EQ-03｜心懂OK蹦</option>
+              <option value="COM-01|反應選擇|把衝動反應變成選擇">COM-01｜反應選擇</option>
+              <option value="ACT-01|財商練功|建立儲蓄與消費觀念">ACT-01｜財商練功</option>
+              <option value="ACT-02|自主啟動|培養孩子自律與行動力">ACT-02｜自主啟動</option>
+              <option value="KIDS-01|快樂芒果|提升低年級專注與學習動機">KIDS-01｜快樂芒果</option>
+              <option value="MAIN-01|幸福教養概念館|所有教養工具入口">MAIN-01｜幸福教養概念館</option>
+            </select>
+          </div>
+          <div class="field"><label>孵化目標</label>
+            <select id="bw_goal">
+              <option>找最佳導流故事（影片素材）</option>
+              <option>找最佳金句（Shorts文案）</option>
+              <option>找最佳腦科學解碼搭配</option>
+              <option>規劃整套內容矩陣</option>
+            </select>
+          </div>
         </div>
-        <div class="shorts-grid" id="t3_shorts_grid"></div>
-      </div>
-      <div class="output-section">
-        <div class="output-section-header">
-          <div class="output-section-title">🎨 Shorts 畫面風格指令</div>
-          <button class="copy-btn" onclick="copyOutput('t3_visual')">複製</button>
+        <button class="gbtn" onclick="runHatch('bw')">⬅️ 反向孵化：找最佳素材配對提示詞</button>
+        <div class="out" id="bw_out">
+          <div class="out-box"><div class="out-head"><div class="out-title">🎯 素材配對提示詞</div><button class="cbtn" onclick="cp('bw_p1')">複製→貼到Claude</button></div><div class="out-content" id="bw_p1"></div></div>
+          <div class="out-box"><div class="out-head"><div class="out-title">📅 內容矩陣提示詞</div><button class="cbtn" onclick="cp('bw_p2')">複製→貼到Claude</button></div><div class="out-content" id="bw_p2"></div></div>
+          <div class="nb"><div class="nb-label">📒 NotebookLM 協作指令</div><div class="nb-content" id="bw_nb"></div></div>
         </div>
-        <div class="output-content" id="t3_visual"></div>
-      </div>
-      <div class="notebook-box">
-        <div class="notebook-box-label">📒 NotebookLM 協作指令</div>
-        <div class="notebook-box-content" id="t3_notebook"></div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- ══════════════════════════════════════════════════
-       任務四：多平台發文
-  ══════════════════════════════════════════════════ -->
-  <div class="task-panel" id="t4">
-    <div class="panel-header">
-      <div class="panel-title">任務四｜<span>多平台發文文案</span></div>
-      <div class="panel-desc">將內容轉化為各社群平台的最佳化文案，含完整說明、短說明、標籤與CTA。</div>
-    </div>
-
-    <div class="form-grid single">
-      <div class="field">
-        <label>核心內容摘要</label>
-        <textarea id="t4_summary" placeholder="貼入影片摘要或金句，例：孩子鬧脾氣後用「我陶醉了」給自己台階下，笑長接住情緒化解僵局..."></textarea>
-      </div>
-    </div>
-
-    <span class="picker-label">選擇發布平台</span>
-    <div class="platform-row">
-      <div class="platform-chip yt selected" onclick="togglePlatform(this)">YouTube</div>
-      <div class="platform-chip fb selected" onclick="togglePlatform(this)">Facebook</div>
-      <div class="platform-chip ig selected" onclick="togglePlatform(this)">Instagram</div>
-      <div class="platform-chip tt" onclick="togglePlatform(this)">TikTok</div>
-    </div>
-
-    <div class="form-grid">
-      <div class="field">
-        <label>導流工具</label>
-        <select id="t4_tool">
-          <option value="MIX-02">MIX-02｜情緒急救</option>
-          <option value="EQ-03">EQ-03｜心懂OK蹦</option>
-          <option value="COM-01">COM-01｜反應選擇</option>
-          <option value="MAIN-01">MAIN-01｜幸福教養概念館</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>情緒調性</label>
-        <select id="t4_tone">
-          <option>溫暖陪伴型</option>
-          <option>知識啟發型</option>
-          <option>情緒共鳴型</option>
-          <option>幽默輕鬆型</option>
-        </select>
-      </div>
-    </div>
-
-    <button class="gen-btn" onclick="runTask('t4')">📣 生成多平台發文包</button>
-
-    <div class="output-area" id="t4_output">
-      <div id="t4_platforms_output"></div>
-      <div class="notebook-box">
-        <div class="notebook-box-label">📒 NotebookLM 協作指令</div>
-        <div class="notebook-box-content" id="t4_notebook"></div>
-      </div>
-    </div>
+<!-- P3 生成區 -->
+<div class="panel" id="p3">
+  <div class="stitle">⚡ 生成區｜<span>五大任務提示詞</span></div>
+  <div class="sdesc">選好素材，產出完整提示詞，複製貼到 Claude 即可生成內容。</div>
+  <div class="chips" id="task_tabs">
+    <div class="chip on" onclick="switchTask('t1',this)">一｜素材串接</div>
+    <div class="chip" onclick="switchTask('t2',this)">二｜長片腳本</div>
+    <div class="chip" onclick="switchTask('t3',this)">三｜Shorts矩陣</div>
+    <div class="chip" onclick="switchTask('t4',this)">四｜多平台發文</div>
+    <div class="chip" onclick="switchTask('t5',this)">五｜課程開發</div>
   </div>
 
-  <!-- ══════════════════════════════════════════════════
-       任務五：課程開發
-  ══════════════════════════════════════════════════ -->
-  <div class="task-panel" id="t5">
-    <div class="panel-header">
-      <div class="panel-title">任務五｜<span>課程規劃與講題開發</span></div>
-      <div class="panel-desc">將素材轉化為具體講題、12週課程單元，或單次工作坊規劃。</div>
-    </div>
-
-    <div class="form-grid">
-      <div class="field">
-        <label>課程類型</label>
-        <select id="t5_type">
-          <option>12週系列課程</option>
-          <option>單次工作坊（2小時）</option>
-          <option>講題開發（一場演講）</option>
-          <option>線上課程模組</option>
-        </select>
+  <div id="tt1">
+    <div class="card"><div class="card-head"><div class="card-title">📦 任務一｜素材串接</div></div><div class="card-body">
+      <div class="fgrid">
+        <div class="field"><label>情境類型</label><select id="t1_sc"><option>情緒爆炸</option><option>親子衝突</option><option>拖延責任感</option><option>成績焦慮</option><option>自信不足</option><option>手足關係</option><option>同儕壓力</option><option>自主學習</option><option>家庭情緒氛圍</option><option>挫折復原</option></select></div>
+        <div class="field"><label>週次主題</label><select id="t1_wt"><option>週二｜人生感悟</option><option>週四｜腦神經科學×生活理解</option><option>週六｜幸福教養故事</option></select></div>
       </div>
-      <div class="field">
-        <label>目標受眾</label>
-        <select id="t5_audience">
-          <option>家長（親職教育）</option>
-          <option>教師（班級經營）</option>
-          <option>親師共同</option>
-          <option>企業員工（情緒管理）</option>
-        </select>
+      <span style="font-size:.7rem;font-weight:700;color:var(--gold-d);display:block;margin-bottom:8px;">選擇故事素材</span>
+      <div class="sgrid" id="t1_sg"></div>
+      <span style="font-size:.7rem;font-weight:700;color:var(--gold-d);display:block;margin-bottom:8px;">切入角度</span>
+      <div class="chips">
+        <div class="chip on" onclick="tchip(this)">🎭 完整故事</div>
+        <div class="chip" onclick="tchip(this)">💬 金句衝擊</div>
+        <div class="chip" onclick="tchip(this)">🧠 腦科學</div>
+        <div class="chip" onclick="tchip(this)">💡 心理學</div>
+        <div class="chip" onclick="tchip(this)">🌀 大人反思</div>
+        <div class="chip" onclick="tchip(this)">🎯 場景代入</div>
       </div>
-    </div>
-
-    <span class="picker-label">選擇核心故事素材（最多選5個）</span>
-    <div class="story-grid" id="t5_story_grid"></div>
-
-    <div class="divider"></div>
-
-    <div class="form-grid single">
-      <div class="field">
-        <label>課程核心目標</label>
-        <input type="text" id="t5_goal" placeholder="例：讓家長學會先穩住自己的情緒，再引導孩子">
+      <button class="gbtn" onclick="genP('t1')">⚡ 產出提示詞 → 複製貼到 Claude</button>
+      <div class="out" id="t1_out">
+        <div class="out-box"><div class="out-head"><div class="out-title">📋 Claude 提示詞</div><button class="cbtn" onclick="cp('t1_p')">一鍵複製</button></div><div class="out-content" id="t1_p"></div></div>
+        <div class="nb"><div class="nb-label">📒 NotebookLM 協作指令</div><div class="nb-content" id="t1_nb"></div></div>
+        <div class="out-box" style="margin-top:10px;"><div class="out-head"><div class="out-title">🛠️ 推薦導流工具</div></div><div class="tcs" id="t1_tools"></div></div>
+        <div class="sh"><div class="sh-label">📊 weekly_plan 回填格式</div><div class="sh-content" id="t1_sh"></div></div>
       </div>
-    </div>
-
-    <button class="gen-btn" onclick="runTask('t5')">🎓 生成課程規劃方案</button>
-
-    <div class="output-area" id="t5_output">
-      <div class="output-section">
-        <div class="output-section-header">
-          <div class="output-section-title">📋 課程架構規劃</div>
-          <button class="copy-btn" onclick="copyOutput('t5_plan')">複製</button>
-        </div>
-        <div class="output-content" id="t5_plan"></div>
-      </div>
-      <div class="output-section">
-        <div class="output-section-header">
-          <div class="output-section-title">🎯 單元講題列表</div>
-          <button class="copy-btn" onclick="copyOutput('t5_topics')">複製</button>
-        </div>
-        <div class="output-content" id="t5_topics"></div>
-      </div>
-      <div class="notebook-box">
-        <div class="notebook-box-label">📒 NotebookLM 協作指令</div>
-        <div class="notebook-box-content" id="t5_notebook"></div>
-      </div>
-    </div>
+    </div></div>
   </div>
 
-</div><!-- /factory -->
+  <div id="tt2" style="display:none;">
+    <div class="card"><div class="card-head"><div class="card-title">🎬 任務二｜長片腳本</div></div><div class="card-body">
+      <div class="fgrid">
+        <div class="field"><label>週次</label><input type="text" id="t2_wk" placeholder="例：W01"></div>
+        <div class="field"><label>影片類型</label><select id="t2_tp"><option>週二｜人生感悟（3-5分鐘）</option><option>週四｜腦科學×生活（5-8分鐘）</option><option>週六｜教養故事（5-8分鐘）</option></select></div>
+      </div>
+      <div class="sgrid" id="t2_sg"></div>
+      <div class="fgrid">
+        <div class="field"><label>核心訊息</label><input type="text" id="t2_core" placeholder="一句話說明這支影片的精髓"></div>
+        <div class="field"><label>導流工具</label><select id="t2_tool"><option value="MIX-02">MIX-02｜情緒急救</option><option value="EQ-01">EQ-01｜心靈調味師</option><option value="EQ-02">EQ-02｜五感覺察</option><option value="EQ-03">EQ-03｜心懂OK蹦</option><option value="COM-01">COM-01｜反應選擇</option><option value="MIX-01">MIX-01｜心靈淨化</option><option value="MAIN-01">MAIN-01｜幸福教養概念館</option></select></div>
+      </div>
+      <button class="gbtn" onclick="genP('t2')">🎬 產出長片腳本提示詞</button>
+      <div class="out" id="t2_out">
+        <div class="out-box"><div class="out-head"><div class="out-title">📝 腳本提示詞</div><button class="cbtn" onclick="cp('t2_p')">複製</button></div><div class="out-content" id="t2_p"></div></div>
+        <div class="out-box"><div class="out-head"><div class="out-title">🏷️ 標題說明標籤提示詞</div><button class="cbtn" onclick="cp('t2_m')">複製</button></div><div class="out-content" id="t2_m"></div></div>
+        <div class="nb"><div class="nb-label">📒 NotebookLM 協作指令</div><div class="nb-content" id="t2_nb"></div></div>
+        <div class="sh"><div class="sh-label">📊 long_video 回填格式</div><div class="sh-content" id="t2_sh"></div></div>
+      </div>
+    </div></div>
+  </div>
 
+  <div id="tt3" style="display:none;">
+    <div class="card"><div class="card-head"><div class="card-title">⚡ 任務三｜Shorts矩陣</div></div><div class="card-body">
+      <div class="fgrid">
+        <div class="field"><label>對應長片ID</label><input type="text" id="t3_lid" placeholder="例：W01-L01"></div>
+        <div class="field"><label>導流工具</label><select id="t3_tool"><option value="MIX-02">MIX-02｜情緒急救</option><option value="EQ-03">EQ-03｜心懂OK蹦</option><option value="COM-01">COM-01｜反應選擇</option><option value="MAIN-01">MAIN-01｜幸福教養概念館</option></select></div>
+      </div>
+      <div class="sgrid" id="t3_sg"></div>
+      <button class="gbtn" onclick="genP('t3')">⚡ 產出Shorts矩陣提示詞</button>
+      <div class="out" id="t3_out">
+        <div class="out-box"><div class="out-head"><div class="out-title">📱 Shorts三版本提示詞</div><button class="cbtn" onclick="cp('t3_p')">複製</button></div><div class="out-content" id="t3_p"></div></div>
+        <div class="nb"><div class="nb-label">📒 NotebookLM 協作指令</div><div class="nb-content" id="t3_nb"></div></div>
+        <div class="sh"><div class="sh-label">📊 shorts 回填格式</div><div class="sh-content" id="t3_sh"></div></div>
+      </div>
+    </div></div>
+  </div>
+
+  <div id="tt4" style="display:none;">
+    <div class="card"><div class="card-head"><div class="card-title">📣 任務四｜多平台發文</div></div><div class="card-body">
+      <div class="field fgrid x1" style="margin-bottom:12px;"><div class="field"><label>內容摘要</label><textarea id="t4_sum" placeholder="貼入影片摘要或核心金句…"></textarea></div></div>
+      <div class="prow">
+        <div class="pchip yt on" onclick="tplat(this)">YouTube</div>
+        <div class="pchip fb on" onclick="tplat(this)">Facebook</div>
+        <div class="pchip ig on" onclick="tplat(this)">Instagram</div>
+        <div class="pchip tt" onclick="tplat(this)">TikTok</div>
+      </div>
+      <div class="fgrid">
+        <div class="field"><label>導流工具</label><select id="t4_tool"><option value="MIX-02">MIX-02｜情緒急救</option><option value="EQ-03">EQ-03｜心懂OK蹦</option><option value="COM-01">COM-01｜反應選擇</option><option value="MAIN-01">MAIN-01｜幸福教養概念館</option></select></div>
+        <div class="field"><label>情緒調性</label><select id="t4_tone"><option>溫暖陪伴型</option><option>知識啟發型</option><option>情緒共鳴型</option><option>幽默輕鬆型</option></select></div>
+      </div>
+      <button class="gbtn" onclick="genP('t4')">📣 產出多平台發文提示詞</button>
+      <div class="out" id="t4_out">
+        <div class="out-box"><div class="out-head"><div class="out-title">📣 發文提示詞</div><button class="cbtn" onclick="cp('t4_p')">複製</button></div><div class="out-content" id="t4_p"></div></div>
+        <div class="nb"><div class="nb-label">📒 NotebookLM 協作指令</div><div class="nb-content" id="t4_nb"></div></div>
+        <div class="sh"><div class="sh-label">📊 publish_content 回填格式</div><div class="sh-content" id="t4_sh"></div></div>
+      </div>
+    </div></div>
+  </div>
+
+  <div id="tt5" style="display:none;">
+    <div class="card"><div class="card-head"><div class="card-title">🎓 任務五｜課程開發</div></div><div class="card-body">
+      <div class="fgrid">
+        <div class="field"><label>課程類型</label><select id="t5_tp"><option>12週系列課程</option><option>單次工作坊（2小時）</option><option>講題開發（一場演講）</option><option>線上課程模組</option></select></div>
+        <div class="field"><label>目標受眾</label><select id="t5_au"><option>家長（親職教育）</option><option>教師（班級經營）</option><option>親師共同</option><option>企業（情緒管理）</option></select></div>
+      </div>
+      <div class="sgrid" id="t5_sg"></div>
+      <div class="field fgrid x1" style="margin-bottom:12px;"><div class="field"><label>課程核心目標</label><input type="text" id="t5_goal" placeholder="例：讓家長學會先穩住自己的情緒，再引導孩子"></div></div>
+      <button class="gbtn" onclick="genP('t5')">🎓 產出課程規劃提示詞</button>
+      <div class="out" id="t5_out">
+        <div class="out-box"><div class="out-head"><div class="out-title">📋 課程規劃提示詞</div><button class="cbtn" onclick="cp('t5_p')">複製</button></div><div class="out-content" id="t5_p"></div></div>
+        <div class="nb"><div class="nb-label">📒 NotebookLM 協作指令</div><div class="nb-content" id="t5_nb"></div></div>
+        <div class="sh"><div class="sh-label">📊 course_db 回填格式</div><div class="sh-content" id="t5_sh"></div></div>
+      </div>
+    </div></div>
+  </div>
+</div>
+
+<!-- P4 繪圖指令 -->
+<div class="panel" id="p4">
+  <div class="stitle">🎨 繪圖指令｜<span>DALL-E 完整指令產生器</span></div>
+  <div class="sdesc">依內容類型自動切換風格，產出可直接貼入 ChatGPT 的畫圖指令。</div>
+  <div class="card"><div class="card-head"><div class="card-title">🎨 視覺風格</div></div><div class="card-body">
+    <div class="style-grid">
+      <div class="style-card on" onclick="selSty(this,'watercolor_relax')"><div class="style-card-icon">🌊</div><div class="style-card-name">舒壓水彩風</div><div class="style-card-desc">週二人生感悟</div></div>
+      <div class="style-card" onclick="selSty(this,'tech_line')"><div class="style-card-icon">⚡</div><div class="style-card-name">簡約科技風</div><div class="style-card-desc">週四腦科學</div></div>
+      <div class="style-card" onclick="selSty(this,'warm_book')"><div class="style-card-icon">📖</div><div class="style-card-name">水彩童書風</div><div class="style-card-desc">週六教養故事</div></div>
+      <div class="style-card" onclick="selSty(this,'minimal_quote')"><div class="style-card-icon">💬</div><div class="style-card-name">極簡排版風</div><div class="style-card-desc">金句圖卡</div></div>
+      <div class="style-card" onclick="selSty(this,'impact_thumb')"><div class="style-card-icon">🔥</div><div class="style-card-name">高對比衝擊風</div><div class="style-card-desc">YouTube縮圖</div></div>
+      <div class="style-card" onclick="selSty(this,'brand_warm')"><div class="style-card-icon">✨</div><div class="style-card-name">品牌暖金風</div><div class="style-card-desc">品牌問候圖</div></div>
+    </div>
+  </div></div>
+  <div class="card"><div class="card-head"><div class="card-title">🖼️ 圖片類型（可多選）</div></div><div class="card-body">
+    <div class="chips" id="img_types">
+      <div class="chip on" onclick="tchip(this)">故事場景插畫（影片用）</div>
+      <div class="chip" onclick="tchip(this)">片頭／片尾圖卡</div>
+      <div class="chip" onclick="tchip(this)">金句圖卡（IG用）</div>
+      <div class="chip" onclick="tchip(this)">YouTube縮圖</div>
+      <div class="chip" onclick="tchip(this)">品牌問候分享圖</div>
+    </div>
+  </div></div>
+  <div class="card"><div class="card-head"><div class="card-title">📝 場景與內容</div></div><div class="card-body">
+    <div class="fgrid">
+      <div class="field"><label>快速選故事</label><select id="img_sel" onchange="fillImg()"><option value="">— 選擇故事 —</option></select></div>
+      <div class="field"><label>畫面比例</label><select id="img_ratio"><option value="16:9">16:9 橫式（影片）</option><option value="9:16">9:16 直式（Shorts）</option><option value="1:1">1:1 正方形（IG）</option><option value="1.91:1">1.91:1（封面）</option></select></div>
+    </div>
+    <div class="field fgrid x1" style="margin-bottom:12px;"><div class="field"><label>場景描述</label><textarea id="img_scene" placeholder="例：媽媽蹲下來和哭泣的孩子說話，窗邊有溫暖的陽光，家裡客廳…"></textarea></div></div>
+    <div class="field fgrid x1" style="margin-bottom:12px;"><div class="field"><label>主題金句（圖卡用）</label><input type="text" id="img_quote" placeholder="例：地獄不住快樂的人"></div></div>
+    <button class="gbtn" onclick="genImg()">🎨 產出 DALL-E 完整指令包</button>
+    <div class="out" id="img_out">
+      <div class="out-box"><div class="out-head"><div class="out-title">🎨 DALL-E 指令（貼入 ChatGPT）</div><button class="cbtn" onclick="cp('img_p')">複製全部</button></div><div class="out-content" id="img_p"></div></div>
+      <div class="nb"><div class="nb-label">💡 使用說明</div><div class="nb-content">1. 複製上方指令
+2. 開啟 ChatGPT（GPT-4o 或以上）
+3. 貼入指令，點送出
+4. 下載生成的圖片
+5. 放入開拍作為影片素材</div></div>
+    </div>
+  </div></div>
+</div>
+
+<!-- P5 回填區 -->
+<div class="panel" id="p5">
+  <div class="stitle">📋 回填區｜<span>試算表格式輸出</span></div>
+  <div class="sdesc">把 Claude 產出的內容整理成可直接貼回 Google Sheets 的格式。</div>
+  <div class="card"><div class="card-head"><div class="card-title">📊 選擇要回填的分頁</div></div><div class="card-body">
+    <div class="chips" id="sheet_tabs">
+      <div class="chip on" onclick="switchSheet('stories_db',this)">stories_db</div>
+      <div class="chip" onclick="switchSheet('insight_library',this)">insight_library</div>
+      <div class="chip" onclick="switchSheet('weekly_plan',this)">weekly_plan</div>
+      <div class="chip" onclick="switchSheet('long_video',this)">long_video</div>
+      <div class="chip" onclick="switchSheet('shorts',this)">shorts</div>
+      <div class="chip" onclick="switchSheet('publish_content',this)">publish_content</div>
+      <div class="chip" onclick="switchSheet('tools_db',this)">tools_db</div>
+      <div class="chip" onclick="switchSheet('course_db',this)">course_db</div>
+      <div class="chip" onclick="switchSheet('knowledge_draft',this)">knowledge_draft</div>
+    </div>
+  </div></div>
+  <div class="card"><div class="card-head"><div class="card-title">📝 貼入 Claude 產出的內容</div></div><div class="card-body">
+    <div class="field fgrid x1" style="margin-bottom:12px;"><div class="field"><label>Claude 產出內容（貼入這裡）</label><textarea id="fill_in" style="min-height:120px;" placeholder="把 Claude 回覆的內容貼入這裡…"></textarea></div></div>
+    <button class="gbtn" onclick="genFill()">📋 轉換成試算表格式</button>
+    <div class="out" id="fill_out">
+      <div class="out-box"><div class="out-head"><div class="out-title">📊 試算表格式（可直接貼上）</div><button class="cbtn" onclick="cp('fill_r')">複製</button></div><div class="out-content" id="fill_r"></div></div>
+      <div class="nb"><div class="nb-label">📌 貼回試算表步驟</div><div class="nb-content" id="fill_steps"></div></div>
+    </div>
+  </div></div>
+</div>
+
+<!-- P6 發布指令 -->
+<div class="panel" id="p6">
+  <div class="stitle">🚀 發布指令｜<span>Claude Code 自動發布</span></div>
+  <div class="sdesc">產出可交給 Claude Code 執行的各平台自動發布腳本指令。</div>
+  <div class="card"><div class="card-head"><div class="card-title">📹 影片資訊</div></div><div class="card-body">
+    <div class="fgrid">
+      <div class="field"><label>影片標題</label><input type="text" id="pub_title" placeholder="例：孩子情緒爆炸怎麼辦？先穩住自己"></div>
+      <div class="field"><label>影片檔案路徑</label><input type="text" id="pub_file" placeholder="例：/videos/W01-S01.mp4"></div>
+    </div>
+    <div class="field fgrid x1" style="margin-bottom:12px;"><div class="field"><label>影片說明</label><textarea id="pub_desc" placeholder="影片完整說明文字…"></textarea></div></div>
+    <div class="fgrid">
+      <div class="field"><label>標籤（逗號分隔）</label><input type="text" id="pub_tags" placeholder="親子教養,情緒管理,正向教養"></div>
+      <div class="field"><label>導流工具連結</label><input type="text" id="pub_url" placeholder="https://angel0973180707.github.io/angel-happy-m1/"></div>
+    </div>
+    <div class="fgrid">
+      <div class="field"><label>排程發布時間（選填）</label><input type="datetime-local" id="pub_time"></div>
+      <div class="field"><label>隱私設定</label><select id="pub_priv"><option value="public">公開</option><option value="unlisted">不公開連結</option><option value="private">私人</option></select></div>
+    </div>
+  </div></div>
+  <div class="card"><div class="card-head"><div class="card-title">🌐 選擇發布平台</div></div><div class="card-body">
+    <div class="prow" id="pub_plats">
+      <div class="pchip yt on" onclick="tplat(this)">YouTube 長片</div>
+      <div class="pchip yt" onclick="tplat(this)">YouTube Shorts</div>
+      <div class="pchip fb on" onclick="tplat(this)">Facebook</div>
+      <div class="pchip ig" onclick="tplat(this)">Instagram Reels</div>
+      <div class="pchip tt" onclick="tplat(this)">TikTok</div>
+    </div>
+    <button class="gbtn" onclick="genPub()">🚀 產出 Claude Code 發布指令</button>
+    <div class="out" id="pub_out">
+      <div id="pub_yt_b" style="display:none;" class="out-box"><div class="out-head"><div class="out-title">▶️ YouTube 長片發布指令</div><button class="cbtn" onclick="cp('pub_yt')">複製</button></div><div class="cc"><div class="cc-label">Claude Code 指令</div><div class="cc-content" id="pub_yt"></div></div></div>
+      <div id="pub_yts_b" style="display:none;" class="out-box"><div class="out-head"><div class="out-title">▶️ YouTube Shorts 發布指令</div><button class="cbtn" onclick="cp('pub_yts')">複製</button></div><div class="cc"><div class="cc-label">Claude Code 指令</div><div class="cc-content" id="pub_yts"></div></div></div>
+      <div id="pub_fb_b" style="display:none;" class="out-box"><div class="out-head"><div class="out-title">📘 Facebook 發布指令</div><button class="cbtn" onclick="cp('pub_fb')">複製</button></div><div class="cc"><div class="cc-label">Claude Code 指令</div><div class="cc-content" id="pub_fb"></div></div></div>
+      <div id="pub_ig_b" style="display:none;" class="out-box"><div class="out-head"><div class="out-title">📷 Instagram 發布指令</div><button class="cbtn" onclick="cp('pub_ig')">複製</button></div><div class="cc"><div class="cc-label">Claude Code 指令</div><div class="cc-content" id="pub_ig"></div></div></div>
+      <div id="pub_tt_b" style="display:none;" class="out-box"><div class="out-head"><div class="out-title">🎵 TikTok 發布指令</div><button class="cbtn" onclick="cp('pub_tt')">複製</button></div><div class="cc"><div class="cc-label">Claude Code 指令</div><div class="cc-content" id="pub_tt"></div></div></div>
+      <div class="nb" style="margin-top:10px;"><div class="nb-label">⚠️ Claude Code 使用說明</div><div class="nb-content">1. 在終端機輸入 claude 啟動 Claude Code
+2. 複製對應平台指令，貼入 Claude Code
+3. Claude Code 會自動安裝套件並執行上傳
+4. 首次使用各平台需完成 API 授權設定：
+   • YouTube → Google Cloud Console OAuth2
+   • Facebook/IG → Meta for Developers Token
+   • TikTok → TikTok for Developers API Key</div></div>
+    </div>
+  </div></div>
+</div>
+
+</div>
 <script>
-// ════════════════════════════
-// DATA
-// ════════════════════════════
-const STORIES = [
-  {id:1,title:'自序-第十九層地獄',tag:'#正向教養'},
-  {id:2,title:'1. 雨中洗禮',tag:'#放下控制 #自我覺察'},
-  {id:3,title:'2. 心靈溝通',tag:'#情緒語言化 #鏡像神經元'},
-  {id:4,title:'3. 被打的芒果',tag:'#快樂學習 #杏仁核劫持'},
-  {id:5,title:'4. 我陶醉了',tag:'#情緒拆彈 #幽默感'},
-  {id:6,title:'5. 勇於負責',tag:'#自主權 #多巴胺'},
-  {id:7,title:'6. 誰聽誰的',tag:'#肚量教育 #情緒調節'},
-  {id:8,title:'7. 開心的一萬步',tag:'#認知重塑 #框架效應'},
-  {id:9,title:'8. 功勞與功德',tag:'#課題分離 #內在動機'},
-  {id:10,title:'9. 生活劇本',tag:'#善解 #手足爭執'},
-  {id:11,title:'10. 無欲則剛',tag:'#延遲滿足 #理財教育'},
-  {id:12,title:'11. 轉化情緒',tag:'#昇華作用 #情緒能量'},
-  {id:13,title:'12. 化敵為友',tag:'#情緒外化 #擬人化'},
-  {id:14,title:'13. 萬萬沒想到',tag:'#失敗教育 #成長型思維'},
-  {id:15,title:'14. 哈佛女大學生',tag:'#決心 #自我超越'},
-  {id:16,title:'15. 幸福吸引力',tag:'#貼心 #催產素'},
-  {id:17,title:'16. 和樂融融',tag:'#人格面具 #幽默感'},
-  {id:18,title:'17. 上善若水',tag:'#同理心 #利他行為'},
-  {id:19,title:'18. 親子關係為上',tag:'#心理安全感 #脆弱的力量'},
-  {id:20,title:'19. 作文比賽',tag:'#潛能開發 #自我效能感'},
-  {id:21,title:'20. 愛惜光陰',tag:'#費曼技巧 #自主學習'},
-  {id:22,title:'21. 做學問要會問',tag:'#後設認知 #執行功能'},
-  {id:23,title:'22. 畢業典禮有感',tag:'#心靈韌性 #正向心理學'},
-  {id:25,title:'1. 老師好神',tag:'#機會教育 #境教'},
-  {id:26,title:'2. 正向思考',tag:'#情緒感染 #快樂習慣'},
-  {id:27,title:'3. 外星人',tag:'#幽默教養 #順勢教養'},
-  {id:28,title:'4. 別管我的人生',tag:'#心理邊界 #非暴力溝通'},
-  {id:29,title:'5. 頑石點頭',tag:'#選擇權 #前額葉活化'},
-  {id:30,title:'6. 相信的力量',tag:'#畢馬龍效應 #賦權'},
-  {id:31,title:'7. 發現新天地',tag:'#音樂療癒 #腦波調節'},
-  {id:32,title:'8. 讓世界更美麗',tag:'#安全依附 #自我價值'},
-  {id:33,title:'9. 火山爆發',tag:'#衝動控制 #前額葉煞車'},
-  {id:34,title:'10. 期待與付出',tag:'#親師合作 #課題分離'},
-  {id:35,title:'11. 心球星球',tag:'#情緒寄生 #外化情緒'},
-  {id:36,title:'12. 釋出善意',tag:'#信任教育 #心理台階'},
-  {id:37,title:'13. 順勢療法',tag:'#元認知 #前額葉成熟'},
-  {id:38,title:'14. 大小眼風波',tag:'#框架效應 #幽默防禦'},
-  {id:39,title:'15. 化被動為主動',tag:'#自然後果 #課題分離'},
-  {id:41,title:'1. 思維超能力',tag:'#流動狀態 #成長型思維'},
-  {id:42,title:'2. 值得嗎',tag:'#情緒標籤 #自我反思'},
-  {id:43,title:'3. 就是要你管',tag:'#安全依附 #情感帳戶'},
-  {id:44,title:'4. 加倍幸福',tag:'#正向螺旋 #分享'},
-  {id:45,title:'5. 有求必應',tag:'#幸福經 #欣賞式探詢'},
-  {id:46,title:'6-8. 畢冊童詩',tag:'#峰終定律 #情感標籤'},
-  {id:47,title:'後記：慢飛的鳥',tag:'#成長型思維 #尊重生命'},
+const STORIES=[
+  {id:2,title:'1. 雨中洗禮',tag:'#放下控制 #自我覺察',quote:'無謂的煩惱只會弄糟情緒，破壞關係。',brain:'孩子天生有「游水反射」。大人的煩惱會啟動杏仁核。',psych:'展現「覺察(Mindfulness)」與從「控制環境」轉向「控制回應」的心理韌性。',summary:'寶貝想淋雨，笑長從擔心轉為支持，準備熱水澡，驚見孩子天生的生命力。'},
+  {id:3,title:'2. 心靈溝通',tag:'#情緒語言化 #鏡像神經元',quote:'能用心傾聽並接納真實感受，才能讓心與心貼近。',brain:'「語言化」情緒能降低杏仁核活動，啟動前額葉處理問題。',psych:'建立「直接溝通」打破「三角溝通」，建立安全依附。',summary:'寶貝說出爸爸偏心的委屈，笑長鼓勵他親自打電話給爸爸，消除了父子心結。'},
+  {id:4,title:'3. 被打的芒果',tag:'#快樂學習 #杏仁核劫持',quote:'暴力相向會讓孩子在學會知識前，先輸掉親子關係並學會暴力。',brain:'壓力會劫持海馬迴導致大腦當機；快樂則分泌多巴胺增強記憶。',psych:'班杜拉的「觀察學習」：孩子會模仿大人的攻擊行為。',summary:'爸爸強迫學習並動手，孩子說「我要打芒果」。笑長則用快樂氛圍讓孩子自然背下唐詩。'},
+  {id:5,title:'4. 我陶醉了',tag:'#情緒拆彈 #幽默感',quote:'拆除情緒炸彈後，才會有理智的空間輕鬆掌握情境。',brain:'穩定情緒稱為「共同調節」，孩子切換大腦頻道至語言區。',psych:'高階的「情緒分化」與「幽默防衛機制」，保護孩子自尊。',summary:'孩子鬧脾氣後，用新詞彙「我陶醉了」給自己台階下，笑長接住情緒化解僵局。'},
+  {id:6,title:'5. 勇於負責',tag:'#自主權 #多巴胺',quote:'讓孩子從日常生活小事開始練習做決定，面對重大決定才會有智慧。',brain:'自主意圖完成任務會分泌多巴胺，強化前額葉執行功能。',psych:'運用「自然後果」與「賦權」，讓孩子發展內在控制點。',summary:'大寶貝自己泡冷牛奶灑一地，笑長讚其能幹；小寶貝則練習自己做選擇，擺脫依賴。'},
+  {id:8,title:'7. 開心的一萬步',tag:'#認知重塑 #框架效應',quote:'站在理解大腦發育特性的立場，就能帶領孩子從負面情緒中脫困。',brain:'「認知評估」與「酬賞系統」：將負擔遊戲化，刺激多巴胺。',psych:'體現「框架效應」，將「負擔」框架改為「目標」框架。',summary:'孩子抱怨爬樓梯累，笑長利用小米手環將其轉化為「萬步任務」，孩子轉為開心執行。'},
+  {id:10,title:'9. 生活劇本',tag:'#善解 #手足爭執',quote:'善解能化解計較，大家共同用感恩的心寫下幸福生活劇本。',brain:'終結「情緒反芻」，透過認知重新評估將防禦模式切換回連結模式。',psych:'建立「社交腳本」與「後設認知」，觀察情緒而非被淹沒。',summary:'哥哥因妹妹撞到他而碎念，妹妹道歉後落幕。笑長引導用「善解」改寫生活劇本。'},
+  {id:13,title:'12. 化敵為友',tag:'#情緒外化 #擬人化',quote:'練習自我覺察並觀察情緒帶給我們的反應，能轉危為安。',brain:'「情緒標籤化」與「外化」降低邊緣系統活躍度，分泌內啡肽。',psych:'敘事治療的「外化(Externalization)」技術，建立「內省覺察力」。',summary:'妹妹生哥哥氣，笑長將「生氣」擬人化為朋友玩捉迷藏，讓孩子在笑容中安頓情緒。'},
+  {id:19,title:'18. 親子關係為上',tag:'#心理安全感 #脆弱的力量',quote:'體會親子關係和諧遠比成績重要，關係就不會輕易破壞。',brain:'建立「心理安全感」，當大人示範錯誤，孩子的杏仁核會降低警報。',psych:'布芮尼·布朗的「脆弱的力量」，大人展現不完美能建立平權合作。',summary:'笑長主動示範數學寫錯，降低孩子壓力。強調親子關係和諧遠比成績重要。'},
+  {id:29,title:'5. 頑石點頭',tag:'#選擇權 #前額葉活化',quote:'孩子固執是困在情緒裡，大人要負責「遞樓梯」給孩子下。',brain:'給予選擇權能活化前額葉判斷，從「情緒腦」切換到「理性腦」。',psych:'避開「權力鬥爭」，透過「正向強化」建立認錯的社會勇氣。',summary:'固執生氣的孩子拒絕道歉。笑長給予「可生氣但要道歉」的選擇權，化解權力爭奪。'},
+  {id:33,title:'9. 火山爆發',tag:'#衝動控制 #前額葉煞車',quote:'練功夫要有耐心，才能真正變成武林高手。',brain:'強化前額葉（PFC）的「煞車」功能。理解情緒訊號能降低杏仁核活躍度。',psych:'運用「角色修復」，將情緒爆發轉化為「自我效能感」的提升。',summary:'衝動孩子克制了揍人的衝動。笑長肯定其「練功」成果，將衝突轉化為互助。'},
+  {id:47,title:'後記：慢飛的鳥',tag:'#成長型思維 #尊重生命',quote:'教育，是對生命個體的尊重和喚醒，這一切必須以寬容為基礎！',brain:'大腦發育節律因人而異。寬容能避免高壓力（皮質醇）抑制學習。',psych:'卡羅·杜維克的「成長型思維」：欣賞孩子的進步而非固定智力。',summary:'海鷗起飛慢但能飛越大海。教育是尊重個體的生命節律，以寬容為基礎。'},
 ];
-
-const TOOL_MAP = {
-  '情緒爆炸': ['MIX-02','EQ-01','EQ-02'],
-  '親子衝突': ['COM-01','EQ-03','MIX-01'],
-  '拖延責任感': ['ACT-02','MAIN-01','EQ-02'],
-  '成績焦慮': ['EQ-03','COM-01','EQ-02'],
-  '自信不足': ['EQ-03','ACT-02','MIX-01'],
-  '手足關係': ['EQ-03','COM-01','MIX-01'],
-  '同儕壓力': ['EQ-03','KIDS-01','COM-01'],
-  '自主學習': ['ACT-02','EQ-02','MAIN-01'],
-  '家庭情緒氛圍': ['MIX-01','EQ-01','EQ-02'],
-  '挫折復原': ['EQ-03','ACT-02','MIX-01'],
+const INSIGHTS=[
+  {code:'R001',main:'跟自己的關係',sub:'情緒',title:'你不是太脆弱，是撐太久了'},
+  {code:'R002',main:'跟自己的關係',sub:'情緒',title:'悲傷沒有那麼重，是你太用力扛了'},
+  {code:'R010',main:'跟自己的關係',sub:'情緒',title:'今天不堅強，也沒關係'},
+  {code:'R011',main:'跟自己的關係',sub:'覺察',title:'你不是不夠好，是太習慣忽略自己'},
+  {code:'R025',main:'跟自己的關係',sub:'自我關係',title:'你值得被好好對待，包括你自己'},
+  {code:'R030',main:'跟自己的關係',sub:'自我關係',title:'你已經夠努力了'},
+  {code:'R041',main:'跟人的關係',sub:'界線',title:'你可以說不'},
+  {code:'R047',main:'跟人的關係',sub:'界線',title:'不是靠近才是愛'},
+  {code:'R063',main:'跟事的關係',sub:'壓力',title:'你可以慢慢來'},
+  {code:'R070',main:'跟事的關係',sub:'壓力',title:'你已經在往前了'},
+  {code:'R081',main:'跟環境的關係',sub:'生活感',title:'日子其實一直在發光'},
+  {code:'R100',main:'跟環境的關係',sub:'幸福感',title:'今天，也可以很幸福'},
+];
+const DECODES={
+  emotion:[
+    {code:'ED-01',title:'情緒標籤：心跳快就是生氣嗎？',brain:'島葉讀取數據，PFC賦予意義',metaphor:'數據標籤'},
+    {code:'ED-02',title:'杏仁核劫持：理智為什麼會斷電？',brain:'杏仁核啟動戰或逃反應',metaphor:'核心驅動劫持'},
+    {code:'ED-03',title:'內在衝突：腦袋裡的天使與魔鬼',brain:'邊緣系統vs.前額葉',metaphor:'底層驅動vs.社會化套件'},
+    {code:'ED-04',title:'焦慮迴路：腦袋裡的災難片導演',brain:'預測編碼機制',metaphor:'預設報錯機制'},
+    {code:'ED-05',title:'多巴胺：它是動機，不是快樂',brain:'VTA獎勵系統',metaphor:'動機誘惑郵件'},
+    {code:'ED-07',title:'悲傷訊號：身體的低能耗模式',brain:'島葉偵測失落感，啟動求助機制',metaphor:'緊急SOS訊號'},
+    {code:'ED-09',title:'命名法：說出名字就能馴服恐懼',brain:'前額葉皮質介入監控',metaphor:'系統管理員啟動'},
+    {code:'ED-10',title:'生理後門：呼吸能「駭」掉焦慮',brain:'迷走神經與呼吸節奏',metaphor:'系統強制通報'},
+    {code:'ED-11',title:'情緒基模：你的情緒被誰編程了？',brain:'多巴胺強化學習與社會建構',metaphor:'遺留系統'},
+    {code:'ED-12',title:'情緒重灌：如何重寫你的感覺？',brain:'神經可塑性',metaphor:'系統重灌'},
+  ],
+  relation:[
+    {code:'RD-01',title:'第一印象：大腦的快速分類演算法',brain:'基模與12毫秒快速反應',metaphor:'預設分類演算法'},
+    {code:'RD-02',title:'戀愛腦：被劫持的最高權限',brain:'多巴胺與催產素屏蔽前額葉',metaphor:'最高權限劫持'},
+    {code:'RD-03',title:'頻率相同：鏡像神經元的共振',brain:'鏡像神經元同步放電',metaphor:'通訊協議同步'},
+    {code:'RD-06',title:'三觀不合：Windows遇上Mac',brain:'前扣帶迴偵測衝突',metaphor:'作業系統不相容'},
+    {code:'RD-09',title:'自證預言：你自己創造了敵人',brain:'偏見引發偏差行為',metaphor:'自定義腳本執行'},
+    {code:'RD-12',title:'解碼衝突：駭入人際關係的斷點',brain:'後設認知介入',metaphor:'手動Debug程序'},
+  ],
+  parenting:[
+    {code:'PD-01',title:'開機儀式：孩子何時發現「我」？',brain:'多感官整合與神經迴路對齊',metaphor:'指針建立'},
+    {code:'PD-02',title:'你是孩子的鏡子：評價即代碼',brain:'鏡中自我理論與外部數據注入',metaphor:'外部數據寫入'},
+    {code:'PD-07',title:'情緒教育：教孩子「命名」情緒',brain:'島葉讀取數據，PFC貼標籤',metaphor:'系統管理員登入'},
+    {code:'PD-09',title:'崩潰現場：被保全劫持的小腦袋',brain:'杏仁核劫持系統，關閉PFC',metaphor:'系統當機'},
+    {code:'PD-10',title:'世界觀修路：父母是首任工程師',brain:'認知基模的大規模訓練',metaphor:'預設作業系統'},
+    {code:'PD-12',title:'拆解「不可能」：解除系統限制器',brain:'網狀激活系統與覺醒',metaphor:'限制器解除'},
+  ]
 };
+const TOOL_MAP={'情緒爆炸':['MIX-02','EQ-01','EQ-02'],'親子衝突':['COM-01','EQ-03','MIX-01'],'拖延責任感':['ACT-02','MAIN-01','EQ-02'],'成績焦慮':['EQ-03','COM-01','EQ-02'],'自信不足':['EQ-03','ACT-02','MIX-01'],'手足關係':['EQ-03','COM-01','MIX-01'],'同儕壓力':['EQ-03','KIDS-01','COM-01'],'自主學習':['ACT-02','EQ-02','MAIN-01'],'家庭情緒氛圍':['MIX-01','EQ-01','EQ-02'],'挫折復原':['EQ-03','ACT-02','MIX-01']};
+const TN={'MIX-02':'情緒急救','EQ-01':'心靈調味師','EQ-02':'五感覺察','EQ-03':'心懂OK蹦','COM-01':'反應選擇','MIX-01':'心靈淨化','ACT-01':'財商練功','ACT-02':'自主啟動','KIDS-01':'快樂芒果','MAIN-01':'幸福教養概念館'};
+const TU={'MIX-02':'https://angel0973180707.github.io/angel-happy-m1/','EQ-01':'https://angel0973180707.github.io/angel-inner-seasoning/','EQ-02':'https://angel0973180707.github.io/Angel-Breath/','EQ-03':'https://angel0973180707.github.io/angel-lucky/','COM-01':'https://angel0973180707.github.io/angel-change-pwa/','MIX-01':'https://angel0973180707.github.io/Angel-inner-clean/','ACT-01':'https://angel0973180707.github.io/happy-pocket-v1.6.2/','KIDS-01':'https://angel0973180707.github.io/happy-mango/','MAIN-01':'https://angel0973180707.github.io/angel-happy-paw/'};
+const STYLES={watercolor_relax:'soft watercolor painting, relaxing calming mood, pastel lavender and sage green tones, flowing brushstrokes, gentle light, lots of white space, therapeutic aesthetic',tech_line:'clean line art illustration, modern minimal style, soft blue and white palette, subtle geometric elements, scientific diagram feel',warm_book:'warm watercolor children book illustration, cozy family scene, soft golden yellow and blush tones, heartwarming safe atmosphere',minimal_quote:'ultra minimal poster design, elegant typography space, warm cream background, single accent color, lots of negative space',impact_thumb:'bold high contrast thumbnail, warm dark background, bright golden accent, strong visual hierarchy, eye-catching',brand_warm:'warm brand illustration, golden cream palette, consistent style, professional yet approachable, small angel motif'};
+const RATIOS={'16:9':'--ar 16:9','9:16':'--ar 9:16','1:1':'--ar 1:1','1.91:1':'--ar 191:100'};
+let notes=JSON.parse(localStorage.getItem('angel_notes')||'[]');
+let curStyle='watercolor_relax';
+let curSheet='stories_db';
 
-const TOOL_NAMES = {
-  'MIX-02': '情緒急救',
-  'EQ-01': '心靈調味師',
-  'EQ-02': '五感覺察',
-  'EQ-03': '心懂OK蹦',
-  'COM-01': '反應選擇',
-  'MIX-01': '心靈淨化',
-  'ACT-01': '財商練功',
-  'ACT-02': '自主啟動',
-  'KIDS-01': '快樂芒果',
-  'MAIN-01': '幸福教養概念館',
-  'MAIN-02': '智多星',
-};
+// NOTES
+function saveNote(){const t=document.getElementById('qnote').value.trim();if(!t)return;const type=document.querySelector('#note_chips .chip.on')?.textContent.trim()||'💡';notes.unshift({id:Date.now(),text:t,type,time:new Date().toLocaleString('zh-TW',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})});localStorage.setItem('angel_notes',JSON.stringify(notes));document.getElementById('qnote').value='';renderNotes();}
+function delNote(id){notes=notes.filter(n=>n.id!==id);localStorage.setItem('angel_notes',JSON.stringify(notes));renderNotes();}
+function renderNotes(){const el=document.getElementById('notes_list');if(!notes.length){el.innerHTML='<div style="font-size:.78rem;color:var(--ink3);padding:8px;">還沒有記錄，隨手記下第一個感悟 ✏️</div>';return;}el.innerHTML=notes.slice(0,15).map(n=>`<div class="note-item"><div class="note-text"><span style="font-size:.68rem;color:var(--gold);margin-right:6px;">${n.type}</span>${n.text}</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;"><span class="note-meta">${n.time}</span><button class="note-del" onclick="delNote(${n.id})">刪除</button></div></div>`).join('');}
+renderNotes();
 
-// ════════════════════════════
-// INIT STORY GRIDS
-// ════════════════════════════
-function buildStoryGrid(containerId) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
-  container.innerHTML = STORIES.map(s => `
-    <div class="story-card" onclick="toggleStory(this)" data-id="${s.id}" data-title="${s.title}">
-      <div class="story-num">ID ${s.id}</div>
-      <div class="story-title">${s.title}</div>
-      <div class="story-tag">${s.tag}</div>
-    </div>
-  `).join('');
-}
+// STORY GRIDS
+function buildSG(id){const el=document.getElementById(id);if(!el)return;el.innerHTML=STORIES.map(s=>`<div class="scard" onclick="toggleS(this,'${id}')" data-id="${s.id}" data-title="${s.title}" data-quote="${s.quote}" data-brain="${s.brain}" data-psych="${s.psych}" data-summary="${s.summary}"><div class="scard-num">ID ${s.id}</div><div class="scard-title">${s.title}</div><div class="scard-tag">${s.tag}</div></div>`).join('');}
+['p1_sg','fw_sg','t1_sg','t2_sg','t3_sg','t5_sg'].forEach(buildSG);
+function toggleS(el,grid){el.classList.toggle('on');if(grid==='p1_sg'&&el.classList.contains('on')){document.getElementById('story_preview').style.display='block';document.getElementById('story_preview_content').textContent=`📖 ${el.dataset.title}\n\n摘要：${el.dataset.summary}\n\n💬 金句：${el.dataset.quote}\n\n🧠 腦科學：${el.dataset.brain}\n\n💡 心理學：${el.dataset.psych}`;}}
+function getS(grid){return[...document.querySelectorAll(`#${grid} .scard.on`)].map(e=>({id:e.dataset.id,title:e.dataset.title,quote:e.dataset.quote,brain:e.dataset.brain,psych:e.dataset.psych,summary:e.dataset.summary}));}
+function filterStories(){const q=document.getElementById('story_search').value.toLowerCase();document.querySelectorAll('#p1_sg .scard').forEach(c=>{c.style.display=(c.dataset.title.toLowerCase().includes(q)||c.dataset.summary.toLowerCase().includes(q))?'':'none';});}
 
-['t1_story_grid','t2_story_grid','t3_story_grid','t5_story_grid'].forEach(buildStoryGrid);
+// Image story select
+const imgSel=document.getElementById('img_sel');STORIES.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=s.title;imgSel.appendChild(o);});
+function fillImg(){const s=STORIES.find(x=>x.id==document.getElementById('img_sel').value);if(!s)return;document.getElementById('img_scene').value=s.summary;document.getElementById('img_quote').value=s.quote;}
 
-// ════════════════════════════
-// UI HELPERS
-// ════════════════════════════
-function switchTab(id) {
-  document.querySelectorAll('.tab-btn').forEach((b,i) => {
-    b.classList.toggle('active', ['t1','t2','t3','t4','t5'][i] === id);
-  });
-  document.querySelectorAll('.task-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
+// DECODE
+function buildDG(type){document.getElementById('decode_grid').innerHTML=DECODES[type].map(d=>`<div class="icard" onclick="this.classList.toggle('on')"><div class="icard-code">${d.code}｜${d.metaphor}</div><div class="icard-title">${d.title}</div></div>`).join('');}
+buildDG('emotion');
+function switchDecode(t,el){document.querySelectorAll('#decode_tab .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');buildDG(t);}
 
-function toggleChip(el) { el.classList.toggle('selected'); }
-function toggleStory(el) { el.classList.toggle('selected'); }
-function togglePlatform(el) { el.classList.toggle('selected'); }
+// INSIGHT
+function buildIG(f){const data=f==='all'?INSIGHTS:INSIGHTS.filter(i=>i.main===f);document.getElementById('insight_grid').innerHTML=data.map(i=>`<div class="icard" onclick="this.classList.toggle('on')"><div class="icard-code">${i.code}｜${i.sub}</div><div class="icard-title">${i.title}</div></div>`).join('');}
+buildIG('all');
+function filterInsight(f,el){document.querySelectorAll('#insight_filter .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');buildIG(f);}
 
-function getSelectedStories(gridId) {
-  return [...document.querySelectorAll(`#${gridId} .story-card.selected`)]
-    .map(el => ({ id: el.dataset.id, title: el.dataset.title }));
-}
-function getSelectedChips(container) {
-  return [...container.querySelectorAll('.chip.selected')].map(c => c.textContent.trim());
-}
+// UI
+function sw(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.ntab').forEach(b=>b.classList.remove('on'));document.getElementById(id).classList.add('on');btn.classList.add('on');}
+function tchip(el){el.classList.toggle('on');}
+function tplat(el){el.classList.toggle('on');}
+function selSty(el,k){document.querySelectorAll('.style-card').forEach(c=>c.classList.remove('on'));el.classList.add('on');curStyle=k;}
+function switchHatch(d){document.getElementById('hfw').classList.toggle('on',d==='fw');document.getElementById('hbw').classList.toggle('on',d==='bw');document.getElementById('hfw_panel').style.display=d==='fw'?'':'none';document.getElementById('hbw_panel').style.display=d==='bw'?'':'none';}
+function switchTask(id,el){document.querySelectorAll('#task_tabs .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');['t1','t2','t3','t4','t5'].forEach(t=>document.getElementById('tt'+t).style.display=t===id?'':'none');}
+function switchSheet(name,el){document.querySelectorAll('#sheet_tabs .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');curSheet=name;const steps={stories_db:'欄位：id | title | summary | parenting_quote | brain_science | psychology | content_type | emotion_type | scenario_type | tags | status\n步驟：開啟stories_db分頁 → 找最後一列 → 依欄位貼入',insight_library:'欄位：id | serial_no | title | main_theme | sub_theme | summary | content | tags | status\n步驟：開啟insight_library分頁 → 找對應R-code列 → 填入空白欄位',weekly_plan:'欄位：week_no | weekly_theme | tue_insight | thu_brain_science | sat_story | story_ids | redirect_tool | video_priority | publish_status\n步驟：開啟weekly_plan分頁 → 新增一列 → 填入週次資料',long_video:'欄位：week_no | video_type | content_id | video_title | core_message | script_outline | ai_image_prompt | redirect_tool | publish_status | ai_prompt | ai_long_copy | video_url\n步驟：開啟long_video分頁 → 新增一列 → 填入腳本資料',shorts:'欄位：long_video_id | shorts_type | version | shorts_title | shorts_core_line | hook_3s | story_point | ending_cta | redirect_tool | publish_status\n步驟：開啟shorts分頁 → 新增三列（三版本）→ 填入Shorts資料',publish_content:'欄位：content_id | platform | title | full_caption | short_caption | hashtags | cta_redirect | redirect_url | publish_status | publish_date\n步驟：開啟publish_content分頁 → 各平台新增一列',tools_db:'欄位：tool_code | tool_name | tool_type | core_function | scenario_type | pwa_url | dev_status | notes | tool_one_liner | long_video_cta | shorts_cta\n步驟：開啟tools_db分頁 → 新增一列填入新工具資料',course_db:'欄位：id | title | type | status | audience | summary | objectives | outline | materials | notes\n步驟：開啟course_db分頁 → 新增一列填入課程資料',knowledge_draft:'欄位：id | source_content_id | source_type | draft_type | title | content | tags | status | note\n步驟：開啟knowledge_draft分頁 → 新增一列儲存草稿'};document.getElementById('fill_steps').textContent=steps[name]||'請參考試算表欄位結構';}
 
-function copyOutput(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  const text = el.innerText || el.textContent;
-  navigator.clipboard.writeText(text).then(() => {
-    const btn = el.closest('.output-section')?.querySelector('.copy-btn');
-    if (btn) { btn.textContent = '已複製 ✓'; btn.classList.add('copied'); setTimeout(() => { btn.textContent='複製'; btn.classList.remove('copied'); }, 2000); }
-  });
-}
+function cp(id){const el=document.getElementById(id);if(!el)return;navigator.clipboard.writeText(el.innerText||el.textContent).then(()=>{const btn=el.closest('.out-box,.nb,.sh,.cc')?.querySelector('.cbtn');if(btn){btn.textContent='已複製 ✓';btn.classList.add('done');setTimeout(()=>{btn.textContent='複製';btn.classList.remove('done');},2000);}});}
 
-function showLoading(btnEl) {
-  btnEl.classList.add('loading');
-  btnEl.innerHTML = '<span class="spinner"></span>AI 生成中…';
-}
-function hideLoading(btnEl, originalText) {
-  btnEl.classList.remove('loading');
-  btnEl.innerHTML = originalText;
-}
-
-// ════════════════════════════
-// CLAUDE API CALL
-// ════════════════════════════
-async function callClaude(prompt) {
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      messages: [{ role: 'user', content: prompt }]
-    })
-  });
-  const data = await res.json();
-  return data.content?.[0]?.text || '生成失敗，請重試。';
-}
-
-// ════════════════════════════
-// TASKS
-// ════════════════════════════
-async function runTask(taskId) {
-  const btn = document.querySelector(`#${taskId} .gen-btn`);
-  const originalText = btn.innerHTML;
-  showLoading(btn);
-
-  try {
-    if (taskId === 't1') await runTask1();
-    if (taskId === 't2') await runTask2();
-    if (taskId === 't3') await runTask3();
-    if (taskId === 't4') await runTask4();
-    if (taskId === 't5') await runTask5();
-    document.getElementById(`${taskId}_output`).classList.add('visible');
-  } catch(e) {
-    alert('生成時發生錯誤，請再試一次。');
-    console.error(e);
+// HATCH
+function runHatch(dir){
+  if(dir==='fw'){
+    const input=document.getElementById('fw_input').value.trim();
+    const stories=getS('fw_sg');
+    const src=input||(stories.length?stories.map(s=>s.title).join('、'):'（請輸入感悟或選擇故事）');
+    document.getElementById('fw_p1').textContent=`你是「小天使笑長」內容策略師，25年國小教師，融合腦神經科學×心理學×正向教養。\n\n【素材輸入】\n${src}\n\n請分析：\n1. 這個素材的核心情感需求是什麼？\n2. 對應哪些腦科學機制？\n3. 現有12個工具（情緒急救/心靈調味師/五感覺察/心懂OK蹦/反應選擇/心靈淨化/財商練功/自主啟動/快樂芒果/幸福教養概念館）中哪些最相關？\n4. 還缺少什麼工具？用戶在什麼情境下找不到對應工具？\n5. 這個素材最適合切成哪3種影片角度？\n\n請用繁體中文，溫暖專業的語氣回覆。`;
+    document.getElementById('fw_p2').textContent=`根據以下素材，請孵化一個新的PWA教養工具構想：\n\n【素材】${src}\n\n請輸出：\n\n工具名稱：（中文，2-4字，有溫度）\n工具代碼：（格式：XXX-XX）\n工具類型：（情緒急救/情緒理解/溝通轉譯/自主能力/金錢教育等）\n核心功能：（一句話說明）\n使用時機：（家長/孩子在什麼情況下會打開這個工具）\n核心體驗流程：（3-5個步驟）\n工具一句話介紹：（tool_one_liner，適合放在影片CTA）\n長片CTA文案：（引導家長去用這個工具的30秒口播）\nShorts CTA文案：（5秒內，直接有力）\n\n品牌要求：溫暖、不說教、點開就能用、陪大人先穩住自己`;
+    document.getElementById('fw_nb').textContent=`正向孵化 NotebookLM 協作指令\n\n素材：${src}\n\n請從知識庫：\n①找出最相關的腦科學理論名稱與機制\n②對應心理學流派與學者\n③insight_library中最匹配的R-code金句\n④建議新工具應涵蓋的核心功能\n⑤參考哪個現有故事作為工具的導流素材`;
+    document.getElementById('fw_sh').textContent=`【tools_db 新工具回填格式】\n\ntool_code\ttool_name\ttool_type\tcore_function\tscenario_type\tpwa_url\tdev_status\tnotes\ttool_one_liner\tlong_video_cta\tshorts_cta\n（新代碼）\t（工具名）\t（類型）\t（功能）\t（情境）\t（待開發）\t構想中\t從「${src.slice(0,15)}」孵化\t（一句話）\t（長片CTA）\t（Shorts CTA）`;
+    document.getElementById('fw_out').classList.add('on');
+  } else {
+    const tv=document.getElementById('bw_tool').value.split('|');
+    const [code,name,func]=tv;
+    const goal=document.getElementById('bw_goal').value;
+    document.getElementById('bw_p1').textContent=`你是「小天使笑長」內容策略師。\n\n【工具】${code} ${name}（${func}）\n【目標】${goal}\n\n請從以下故事庫中找出最適合這個工具的素材：\n${STORIES.slice(0,8).map(s=>`・${s.title}：${s.quote}`).join('\n')}\n（其他故事請依腦科學/情緒類型自行判斷）\n\n請輸出：\n1. 最佳故事配對前5名（說明為何適合）\n2. 最佳療癒金句配對（R001-R100中最適合的5個）\n3. 最佳腦科學解碼搭配（從emotion/relation/parenting_decode選）\n4. 建議的影片Hook開場句（3個版本）\n\n請用繁體中文，溫暖有深度的語氣。`;
+    document.getElementById('bw_p2').textContent=`你是「小天使笑長」內容規劃師。\n\n【工具】${code} ${name}\n\n請規劃以這個工具為核心的6週內容矩陣：\n\n每週包含：\n・週次與主題\n・影片類型（週二感悟/週四腦科學/週六教養）\n・使用的故事/金句素材\n・Shorts版本類型（情緒共鳴/腦科學/場景代入）\n・結尾CTA引導到 ${name}\n\n格式：\n週次｜主題｜影片類型｜素材｜Shorts版本｜CTA\n\n目標：6週18支影片，全部自然導流到 ${name}，建立完整內容漏斗。`;
+    document.getElementById('bw_nb').textContent=`反向孵化 NotebookLM 協作指令\n\n工具：${code} ${name}（${func}）\n目標：${goal}\n\n請從知識庫：\n①找出最能詮釋這個工具功能的5個故事\n②最能引發使用動機的療癒金句5個\n③最適合的腦科學解碼主題搭配\n④6週內容矩陣的排程建議\n⑤這個工具的最佳導流Shorts格式`;
+    document.getElementById('bw_out').classList.add('on');
   }
-
-  hideLoading(btn, originalText);
 }
 
-// ─── 任務一 ───
-async function runTask1() {
-  const scenario = document.getElementById('t1_scenario').value || '親子衝突';
-  const weekTheme = document.getElementById('t1_week_theme').value || '週六｜幸福教養故事';
-  const stories = getSelectedStories('t1_story_grid');
-  const angles = getSelectedChips(document.querySelector('#t1 .chip-group'));
-
-  const storyList = stories.length > 0
-    ? stories.map(s => `・${s.title}`).join('\n')
-    : '・（未指定，請從「小天使笑長」故事庫中選取最相關的素材）';
-
-  const prompt = `
-你是「小天使笑長」AI影音工廠的內容策劃師。
-核心品牌理念：陪大人先穩住自己，用腦神經科學×心理學×生活故事，把幸福教養走成一條長久的路。
-25年國小教師與家庭教育經驗，融合正向教養。
-
-【情境類型】${scenario}
-【週次主題】${weekTheme}
-【選用故事素材】
-${storyList}
-【切入角度】${angles.join('、') || '完整故事版'}
-
-請產出「主題串接報告」，格式如下（繁體中文，有溫度，專業但親切）：
-
-## 🎯 本週主題定位
-（一段話說明這個組合的核心訊息）
-
-## 📦 素材串接邏輯
-（說明故事→腦科學→心理學→療癒金句如何連結，各2-3句）
-
-## 💡 核心金句（可用作影片開頭）
-（1-2句有力的金句）
-
-## 🎬 影片切入建議
-（依選擇的角度，給出具體的開場方式）
-
-## 🔁 無限循環延伸
-（這個素材還可以從哪3個不同角度再切出新影片）
-`;
-
-  const result = await callClaude(prompt);
-  document.getElementById('t1_main_content').textContent = result;
-
-  // NotebookLM指令
-  const nbPrompt = `請執行任務一【原料提取與主題串接】
-情境：${scenario}
-週次：${weekTheme}
-故事素材：${storyList}
-請從知識庫中找出最相關的腦科學理論、心理學概念與療癒金句，並列出3個可延伸的影片角度。`;
-  document.getElementById('t1_notebook').textContent = nbPrompt;
-
-  // 推薦工具
-  const toolCodes = TOOL_MAP[scenario] || ['MIX-01','EQ-01','COM-01'];
-  const toolsEl = document.getElementById('t1_tools');
-  toolsEl.innerHTML = toolCodes.map((code, i) => `
-    <span class="tool-chip ${i===0?'main':'sub'}">${i===0?'主要：':'次要：'}${code} ${TOOL_NAMES[code]||code}</span>
-  `).join('');
+// GENERATE PROMPTS
+function genP(task){
+  document.getElementById(task+'_out').classList.add('on');
+  if(task==='t1'){
+    const sc=document.getElementById('t1_sc').value;
+    const wt=document.getElementById('t1_wt').value;
+    const st=getS('t1_sg');
+    const ang=[...document.querySelectorAll('#tt1 .chips .chip.on')].map(c=>c.textContent.trim()).join('、');
+    const stTxt=st.length?st.map(s=>`・${s.title}\n  金句：${s.quote}\n  腦科學：${s.brain}\n  心理學：${s.psych}`).join('\n\n'):'（請選擇故事素材）';
+    document.getElementById('t1_p').textContent=`你是「小天使笑長」AI影音工廠的內容策劃師。\n品牌核心：陪大人先穩住自己，用腦神經科學×心理學×生活故事，把幸福教養走成一條長久的路。\n25年國小教師與家庭教育經驗，融合正向教養。風格：溫暖、有深度、生活化、不說教。\n\n【情境類型】${sc}\n【週次主題】${wt}\n【選用故事素材】\n${stTxt}\n【切入角度】${ang||'完整故事版'}\n\n請產出「主題串接報告」（繁體中文）：\n\n## 🎯 本週主題定位\n（一段話，讓家長心裡一動）\n\n## 📦 素材串接邏輯\n故事→腦科學→心理學→療癒金句，各2-3句說明連結方式\n\n## 💡 核心金句（影片開頭用）\n（1-2句，有力有溫度）\n\n## 🎬 影片開場建議\n（具體的第一句話，讓人停下來看）\n\n## 🔁 無限延伸\n（同素材還可以從哪3個角度切出新影片）`;
+    document.getElementById('t1_nb').textContent=`任務一 NotebookLM 協作指令\n\n情境：${sc} | 週次：${wt}\n故事素材：${st.map(s=>s.title).join('、')||'待選'}\n\n請從知識庫提取：\n①最相關的腦科學理論（完整名稱+機制）\n②對應心理學流派與理論依據\n③insight_library最搭配的R-code金句（3個）\n④decode庫最適合搭配的解碼主題\n⑤3個不同角度的影片延伸方向`;
+    const tools=TOOL_MAP[sc]||['EQ-03','COM-01','MIX-01'];
+    document.getElementById('t1_tools').innerHTML=tools.map((t,i)=>`<span class="tc ${i===0?'main':'sub'}">${i===0?'主推':'搭配'}：${t} ${TN[t]||t}</span>`).join('');
+    document.getElementById('t1_sh').textContent=`【weekly_plan 回填格式】\nweek_no\tweekly_theme\t${wt.includes('二')?'tue_insight':wt.includes('四')?'thu_brain_science':'sat_story'}\tstory_ids\tredirect_tool\tpublish_status\nW01\t${sc}\t${st.map(s=>s.title).join('、')||'待填'}\t${st.map(s=>s.id).join('、')||'待填'}\t${tools[0]}\t草稿`;
+  }
+  if(task==='t2'){
+    const wk=document.getElementById('t2_wk').value||'W01';
+    const tp=document.getElementById('t2_tp').value;
+    const core=document.getElementById('t2_core').value||'大人先穩住，孩子才能安全著陸';
+    const tool=document.getElementById('t2_tool').value;
+    const st=getS('t2_sg');
+    const stTxt=st.map(s=>`・${s.title}（${s.quote}）`).join('\n')||'（請選擇故事素材）';
+    document.getElementById('t2_p').textContent=`你是「小天使笑長」的影片腳本師。\n品牌：25年國小教師，融合腦神經科學×心理學×正向教養。\n風格：溫暖有深度，生活化，讓家長感受到被理解，不說教。\n\n【週次】${wk} | 【類型】${tp}\n【故事素材】\n${stTxt}\n【核心訊息】${core}\n【結尾導流工具】${tool} ${TN[tool]||tool}（${TU[tool]||'[工具連結]'}）\n\n請生成完整長片口播腳本：\n\n## 🎬 片頭（0:00-0:20）\n吸引停留的場景描述或問句\n\n## 📖 故事段（依長度展開）\n口語化敘述，自然停頓標示【停頓1秒】\n每段250-350字\n\n## 🧠 知識點解析\n腦科學或心理學說明，通俗易懂，用日常比喻\n\n## 🎯 情境練習\n一個家長今天就能試的方法，具體步驟\n\n## 💫 片尾CTA（最後30秒）\n溫暖引導去使用 ${TN[tool]||tool} 工具\n連結：${TU[tool]||'[工具連結]'}`;
+    document.getElementById('t2_m').textContent=`請為以下YouTube影片生成上傳資訊：\n核心：${core} | 類型：${tp}\n\n【YouTube標題】（30字以內，含關鍵字，有情感鉤子）\n\n【影片說明】（150-200字）\n包含：故事概述→學習收穫→工具連結\n工具：${TU[tool]||'[工具連結]'}\n\n【標籤】（12-15個，繁體中文，逗號分隔）\n必含：親子教養,正向教養,情緒管理,腦科學,小天使笑長\n\n【縮圖文字】（畫面大字，最多8字）\n\n【章節標記】\n0:00 片頭\n（依腳本各段填入）`;
+    document.getElementById('t2_nb').textContent=`任務二 NotebookLM 協作指令\n\n週次：${wk} | 類型：${tp}\n核心訊息：${core}\n素材：${stTxt}\n\n請補充：\n①相關腦科學研究正確學術名稱與依據\n②對應心理學理論完整說明（含學者名稱）\n③笑長著作中可引用的相關金句\n④同主題decode庫最佳搭配\n⑤建議的知識點說明順序`;
+    document.getElementById('t2_sh').textContent=`【long_video 回填格式】\nweek_no\tvideo_type\tcontent_id\tvideo_title\tcore_message\tredirect_tool\tpublish_status\tai_prompt\n${wk}\t${tp.split('｜')[0]}\t${wk}-L01\t（貼入Claude產出的標題）\t${core}\t${tool}\t草稿\t（本次提示詞）`;
+  }
+  if(task==='t3'){
+    const lid=document.getElementById('t3_lid').value||'W01-L01';
+    const tool=document.getElementById('t3_tool').value;
+    const st=getS('t3_sg');
+    const stTxt=st.map(s=>`・${s.title}：${s.quote}`).join('\n')||'（請選擇素材）';
+    document.getElementById('t3_p').textContent=`你是「小天使笑長」短影音爆款文案師。\n平台：YouTube Shorts / Instagram Reels / TikTok（9:16，60秒以內）\n對應長片：${lid}\n素材：\n${stTxt}\n導流工具：${tool} ${TN[tool]||tool}（${TU[tool]||'[工具連結]'}）\n\n請生成三個版本Shorts腳本，每版嚴格控制在60秒口播：\n\n═══ 版本一：💥 情緒共鳴版 ═══\n（讓家長第一秒就說「這就是我！」）\n【Hook 前3秒】停住拇指的第一句話\n【故事點 20秒】核心場景，口語化，畫面感強\n【金句 5秒】讓人想截圖的一句話\n【CTA 5秒】導流到${TN[tool]||tool}，自然不硬推\n【字幕文字】每行8字以內，直接貼開拍用\n\n═══ 版本二：🧠 腦科學知識版 ═══\n（讓人覺得長知識了，值得分享）\n【Hook 前3秒】\n【知識點 20秒】一個概念，超白話說\n【生活應用 10秒】今天就能用\n【CTA 5秒】\n【字幕文字】\n\n═══ 版本三：🎯 場景代入版 ═══\n（如果你家也這樣，這支影片是你的）\n【Hook 前3秒】場景描述，讓家長對號入座\n【場景展開 15秒】\n【轉折與方法 10秒】\n【CTA 5秒】\n【字幕文字】`;
+    document.getElementById('t3_nb').textContent=`任務三 NotebookLM 協作指令\n\n長片ID：${lid} | 素材：${stTxt}\n\n請提取：\n①最有情緒共鳴力的金句（想截圖分享那一句）\n②最易懂的腦科學比喻（5秒說完）\n③家長最常遇到的具體場景（不超過20字）\n④最適合的Hook開場句（3個版本）\n⑤最佳Shorts標題（各版本，含關鍵字）`;
+    document.getElementById('t3_sh').textContent=`【shorts 回填格式】（三列）\nlong_video_id\tshorts_type\tversion\tshorts_title\thook_3s\tstory_point\tending_cta\tredirect_tool\tpublish_status\n${lid}\t情緒共鳴版\tv1\t（貼入標題）\t（貼入Hook）\t（貼入故事點）\t（貼入CTA）\t${tool}\t草稿\n${lid}\t腦科學知識版\tv2\t（貼入標題）\t（貼入Hook）\t（貼入知識點）\t（貼入CTA）\t${tool}\t草稿\n${lid}\t場景代入版\tv3\t（貼入標題）\t（貼入Hook）\t（貼入場景）\t（貼入CTA）\t${tool}\t草稿`;
+  }
+  if(task==='t4'){
+    const sum=document.getElementById('t4_sum').value||'（請輸入影片摘要）';
+    const plats=[...document.querySelectorAll('#tt4 .pchip.on')].map(p=>p.textContent.trim());
+    const tool=document.getElementById('t4_tool').value;
+    const tone=document.getElementById('t4_tone').value;
+    document.getElementById('t4_p').textContent=`你是「小天使笑長」社群文案師。\n品牌調性：溫暖、有深度、不說教、陪伴感強。\n情緒調性：${tone}\n內容摘要：${sum}\n導流工具：${tool} ${TN[tool]||tool}（${TU[tool]||'[工具連結]'}）\n\n請為以下平台各生成一份發文文案：\n${plats.join('、')}\n\n每份格式：\n【平台名】\n完整說明文：（依平台長度）\n短說明（60字內）：\nHashtag（8-10個）：\n留言置頂CTA：\n\n平台風格差異：\nYouTube→深度完整含工具連結\nFacebook→親切分享感，含情感鉤子\nInstagram→簡潔有感，前兩行最重要\nTikTok→年輕口語，直接有衝擊感`;
+    document.getElementById('t4_nb').textContent=`任務四 NotebookLM 協作指令\n\n平台：${plats.join('、')} | 調性：${tone}\n摘要：${sum}\n\n請補充：\n①這個主題最適合的熱門hashtag（各平台分別列）\n②台灣親子社群最高互動的發文格式參考\n③最佳發文時段建議\n④留言區常見問題的預設回覆模板`;
+    document.getElementById('t4_sh').textContent=`【publish_content 回填格式】\ncontent_id\tplatform\ttitle\tfull_caption\tshort_caption\thashtags\tcta_redirect\tredirect_url\tpublish_status\n（影片ID）\tYouTube\t（標題）\t（完整說明）\t（短說明）\t（標籤）\t${tool}\t${TU[tool]||'[連結]'}\t草稿\n（影片ID）\tFacebook\t（標題）\t（FB文案）\t（短說明）\t（標籤）\t${tool}\t${TU[tool]||'[連結]'}\t草稿\n（影片ID）\tInstagram\t（標題）\t（IG文案）\t（短說明）\t（標籤）\t${tool}\t${TU[tool]||'[連結]'}\t草稿`;
+  }
+  if(task==='t5'){
+    const tp=document.getElementById('t5_tp').value;
+    const au=document.getElementById('t5_au').value;
+    const goal=document.getElementById('t5_goal').value||'讓家長學會先穩住自己的情緒，再引導孩子';
+    const st=getS('t5_sg');
+    const stTxt=st.map(s=>`・${s.title}（${s.quote}）`).join('\n')||'（請選擇故事素材）';
+    document.getElementById('t5_p').textContent=`你是「小天使笑長」課程規劃師，25年國小教師，融合腦神經科學×心理學×正向教養。\n品牌理念：陪大人先穩住自己，把幸福教養走成一條長久的路。\n\n【課程類型】${tp}\n【目標受眾】${au}\n【核心目標】${goal}\n【核心故事素材】\n${stTxt}\n\n請生成完整課程規劃：\n\n## 📚 課程總覽\n課程名稱：\n課程標語：\n適合對象：\n課程特色（3點）：\n\n## 🏗️ 核心能力架構（3-4個）\n每個能力：名稱+說明+對應工具\n\n## 📅 單元架構\n${tp.includes('12週')?'第1-12週，每週：\n主題 | 核心故事 | 腦科學重點 | 家長練習 | 推薦工具':'時間軸規劃：\n時段 | 主題 | 活動 | 工具'}\n\n## 🎯 每單元標準格式\n・主題故事：\n・核心問句：（讓家長心裡一動）\n・腦科學：（一個知識點）\n・家長練習：（今天就能做）\n・工具推薦：（對應PWA工具code）\n\n## 📊 課程成效指標`;
+    document.getElementById('t5_nb').textContent=`任務五 NotebookLM 協作指令\n\n類型：${tp} | 受眾：${au}\n目標：${goal}\n素材：${stTxt}\n\n請補充：\n①各單元對應心理學理論完整說明與學者依據\n②可引用的腦科學研究數據\n③與市面親職教育課程的差異化優勢\n④建議的課程評量方式\n⑤搭配PWA工具的使用時機說明`;
+    document.getElementById('t5_sh').textContent=`【course_db 回填格式】\nid\ttitle\ttype\tstatus\taudience\tsummary\tobjectives\toutline\tnotes\n（自動）\t（課程名稱）\t${tp}\t草稿\t${au}\t（摘要）\t${goal}\t（大綱）\t（備註）`;
+  }
 }
 
-// ─── 任務二 ───
-async function runTask2() {
-  const week = document.getElementById('t2_week').value || 'W01';
-  const type = document.getElementById('t2_type').value;
-  const core = document.getElementById('t2_core').value || '大人先穩住，孩子才能安全著陸';
-  const tool = document.getElementById('t2_tool').value;
-  const toolName = TOOL_NAMES[tool] || tool;
-  const stories = getSelectedStories('t2_story_grid');
-  const storyList = stories.map(s => `・${s.title}`).join('\n') || '・（請選擇故事素材）';
-
-  const scriptPrompt = `
-你是「小天使笑長」的影片腳本師。
-品牌：25年國小教師，融合腦神經科學×心理學×正向教養。
-風格：溫暖、有深度、生活化，讓家長感受到被理解。
-
-【週次】${week}
-【影片類型】${type}
-【故事素材】${storyList}
-【核心訊息】${core}
-【結尾導流工具】${tool} ${toolName}
-
-請生成完整長片口播腳本，格式：
-## 片頭（15秒）
-（吸引停留的問句或場景描述）
-
-## 主體（依類型展開，3-6個段落）
-（每段有標題、口播文字，自然停頓處標示【停頓】）
-
-## 知識點解析
-（腦科學或心理學說明，通俗易懂）
-
-## 情境練習
-（一個家長可以今天就試試的方法）
-
-## 片尾CTA（30秒）
-（引導去使用 ${toolName} 工具，溫暖有力）
-`;
-
-  const imagePrompt = `
-針對同一支影片「${core}」，生成5組ChatGPT畫圖指令。
-風格統一：粉紫柔光水彩童書風，溫暖明亮，角色為媽媽/爸爸與孩子的生活場景，留白多，不要文字在圖裡。
-格式：
-場景1：（20字以內的場景描述）
-指令：A [場景], watercolor illustration, soft pastel colors, warm light, white space, children book style, no text, gentle and cozy atmosphere --ar 16:9
-
-（共5組）`;
-
-  const metaPrompt = `
-為「小天使笑長」YouTube影片生成上傳資訊：
-核心主題：${core}
-影片類型：${type}
-
-請輸出：
-【YouTube標題】（30字以內，含關鍵字，有情感鉤子）
-【影片說明】（150字，包含：故事概述、學習收穫、工具連結佔位符[TOOL_URL]）
-【標籤】（10-15個繁體中文標籤，用逗號分隔）
-【縮圖建議文字】（畫面上的大字，最多8個字）`;
-
-  const [script, image, meta] = await Promise.all([
-    callClaude(scriptPrompt),
-    callClaude(imagePrompt),
-    callClaude(metaPrompt),
-  ]);
-
-  document.getElementById('t2_script').textContent = script;
-  document.getElementById('t2_image').textContent = image;
-  document.getElementById('t2_meta').textContent = meta;
-
-  document.getElementById('t2_notebook').textContent =
-`請執行任務二【長影片腳本輔助】
-週次：${week} | 類型：${type}
-核心訊息：${core}
-故事素材：${storyList}
-請從知識庫補充：①相關腦科學研究依據 ②對應心理學理論全名 ③可引用的笑長金句`;
+// IMAGE PROMPT
+function genImg(){
+  const style=STYLES[curStyle]||STYLES.warm_book;
+  const scene=document.getElementById('img_scene').value||'親子溫馨互動場景';
+  const quote=document.getElementById('img_quote').value||'';
+  const ratio=document.getElementById('img_ratio').value;
+  const rc=RATIOS[ratio]||'--ar 16:9';
+  const types=[...document.querySelectorAll('#img_types .chip.on')].map(c=>c.textContent.trim());
+  let out='';
+  if(!types.length||types.includes('故事場景插畫（影片用）')){
+    out+=`【故事場景插畫】比例：${ratio}\n\n指令1（主場景）：\n${scene}, ${style}, no text, no watermark ${rc}\n\n指令2（特寫情緒）：\nClose-up emotional scene, ${scene.split('，')[0]||'parent and child'}, soft warm light, ${style}, no text ${rc}\n\n指令3（象徵畫面）：\nSymbolic illustration of "${quote||scene}", metaphorical, ${style}, no text ${rc}\n\n指令4（環境氛圍）：\nCozy home environment, ${scene.split('，').slice(-1)[0]||'peaceful atmosphere'}, ${style}, no text ${rc}\n\n指令5（結尾畫面）：\nHopeful warm resolution scene, family moment, ${style}, no text ${rc}\n\n`;
+  }
+  if(types.includes('片頭／片尾圖卡')){
+    out+=`【片頭圖卡】\nBrand card for 小天使笑長, warm golden cream palette, angel motif, elegant, ${ratio==='9:16'?'vertical':'horizontal'} format, no text ${rc}\n\n【片尾圖卡】\nWarm closing card, soft gradient cream and gold, subscribe visual hint, ${style}, no text ${rc}\n\n`;
+  }
+  if(types.includes('金句圖卡（IG用）')){
+    out+=`【金句圖卡 IG用】\n\n底圖A（純色調）：\nMinimal watercolor wash background, soft pastels, calming, no text, quote card layout --ar 1:1\n\n底圖B（插圖版）：\nSmall decorative illustration, ${scene.split('，')[0]||'gentle figure'}, bottom clear for text, ${style}, no text --ar 1:1\n\n底圖C（直式）：\nAbstract soft watercolor vertical, inspirational mood, no text, perfect for quote --ar 9:16\n\n（在Canva加上金句文字：「${quote||'您的金句'}」）\n\n`;
+  }
+  if(types.includes('YouTube縮圖')){
+    out+=`【YouTube縮圖】16:9高對比\n\n主縮圖：\n${scene}, bold YouTube thumbnail style, warm dark background, golden accent, eye-catching, no text --ar 16:9\n\n備用A：\nSplit design, left warm illustration, right dark gradient for text, ${style}, thumbnail style --ar 16:9\n\n備用B：\nClose-up emotional expression, soft dramatic lighting, warm tones, thumbnail style --ar 16:9\n\n（縮圖文字在Canva加，8字以內大字）\n\n`;
+  }
+  if(types.includes('品牌問候分享圖')){
+    out+=`【品牌問候分享圖】\n\n早安問候：\nWarm morning scene, soft golden light, peaceful, small angel motif, brand style, cream gold palette, no text --ar 1:1\n\n感謝分享：\nHeartwarming community scene, connected family, ${style}, appreciative mood, no text --ar 1:1\n\n節慶問候：\nGentle festive illustration, family joy, ${style}, warm colors, no text --ar 1:1\n\n`;
+  }
+  document.getElementById('img_p').textContent=out||'請選擇至少一種圖片類型';
+  document.getElementById('img_out').classList.add('on');
 }
 
-// ─── 任務三 ───
-async function runTask3() {
-  const longId = document.getElementById('t3_long_id').value || 'W01-S01';
-  const platform = document.getElementById('t3_platform').value;
-  const tool = document.getElementById('t3_tool').value;
-  const toolName = TOOL_NAMES[tool] || tool;
-  const stories = getSelectedStories('t3_story_grid');
-  const storyList = stories.map(s => `・${s.title}`).join('\n') || '・（請選擇素材）';
-
-  const prompt = `
-你是「小天使笑長」短影音爆款文案師。
-平台：${platform}
-對應長片：${longId}
-素材：${storyList}
-導流工具：${tool} ${toolName}
-
-請生成三個版本的Shorts腳本，每版本格式：
-─────────────────
-版本X：[版本名稱]
-【Hook 前3秒】（讓人停下來的第一句話）
-【故事點 15秒】（核心場景，口語化，畫面感強）
-【知識點 10秒】（一個腦科學/心理學金句）
-【CTA 5秒】（導流到${toolName}，自然不硬推）
-【字幕文字】（直接貼開拍用的字幕，每行8字以內）
-─────────────────
-
-三個版本分別是：
-版本一：情緒共鳴版（讓家長感覺「這就是我！」）
-版本二：腦科學知識版（讓人覺得長知識了）
-版本三：場景代入版（「如果你家孩子也這樣…」）
-`;
-
-  const visualPrompt = `
-為「小天使笑長」Shorts生成3組畫面風格指令（${platform}格式9:16）：
-素材：${storyList}
-風格：粉紫柔光，水彩童書，溫暖，留白，不含文字
-
-格式：
-場景1：[場景描述]
-ChatGPT指令：A [scene], watercolor, soft pastel, warm bokeh, 9:16 vertical, children book illustration, minimalist, no text --ar 9:16
-（3組）`;
-
-  const [shorts, visual] = await Promise.all([
-    callClaude(prompt),
-    callClaude(visualPrompt),
-  ]);
-
-  // 解析三版本
-  const grid = document.getElementById('t3_shorts_grid');
-  const versions = shorts.split(/版本[一二三123]：/).filter(v => v.trim());
-  const labels = ['💥 情緒共鳴版','🧪 腦科學版','🎯 場景代入版'];
-  grid.innerHTML = versions.slice(0,3).map((v,i) => `
-    <div class="shorts-card">
-      <div class="shorts-card-header">${labels[i]||'版本'+(i+1)}</div>
-      <div class="shorts-card-body">${v.trim()}</div>
-    </div>
-  `).join('') || `<div style="grid-column:1/-1;padding:16px;font-size:0.85rem;color:#666;">${shorts}</div>`;
-
-  document.getElementById('t3_visual').textContent = visual;
-  document.getElementById('t3_all').innerText = shorts;
-
-  document.getElementById('t3_notebook').textContent =
-`請執行任務三【Shorts矩陣輔助】
-長片ID：${longId} | 平台：${platform}
-素材：${storyList}
-請從知識庫提取：①最有情緒共鳴的金句 ②最易懂的腦科學比喻 ③家長最常遇到的場景描述`;
+// FILL FORMAT
+function genFill(){
+  const input=document.getElementById('fill_in').value.trim();
+  if(!input){document.getElementById('fill_r').textContent='請貼入Claude產出的內容';return;}
+  document.getElementById('fill_r').textContent=`【${curSheet} 回填資料】\n更新時間：${new Date().toLocaleString('zh-TW')}\n\n${input}`;
+  document.getElementById('fill_out').classList.add('on');
 }
 
-// ─── 任務四 ───
-async function runTask4() {
-  const summary = document.getElementById('t4_summary').value || '（請輸入影片摘要）';
-  const tone = document.getElementById('t4_tone').value;
-  const tool = document.getElementById('t4_tool').value;
-  const toolName = TOOL_NAMES[tool] || tool;
-  const platforms = [...document.querySelectorAll('#t4 .platform-chip.selected')].map(p => p.textContent.trim());
+// PUBLISH COMMANDS
+function genPub(){
+  const title=document.getElementById('pub_title').value||'影片標題';
+  const file=document.getElementById('pub_file').value||'/videos/video.mp4';
+  const desc=document.getElementById('pub_desc').value||'影片說明';
+  const tags=document.getElementById('pub_tags').value||'親子教養,正向教養';
+  const toolUrl=document.getElementById('pub_url').value||'https://angel0973180707.github.io/angel-happy-paw/';
+  const time=document.getElementById('pub_time').value;
+  const priv=document.getElementById('pub_priv').value;
+  const plats=[...document.querySelectorAll('#pub_plats .pchip.on')].map(p=>p.textContent.trim());
+  const fullDesc=`${desc}\n\n🛠️ 立即使用工具：${toolUrl}\n\n#親子教養 #正向教養 #小天使笑長 #腦科學 #情緒管理`;
 
-  const prompt = `
-你是「小天使笑長」社群文案師。
-品牌調性：溫暖、有深度、不說教、陪伴感強。
-情緒調性：${tone}
-內容摘要：${summary}
-導流工具：${tool} ${toolName}（URL佔位符：[TOOL_URL]）
+  if(plats.includes('YouTube 長片')){
+    document.getElementById('pub_yt').textContent=`# YouTube 長片上傳指令
+# 在 Claude Code 中執行此指令
 
-請為以下平台各生成一份完整發文文案：
-${platforms.map(p => `【${p}】`).join('\n')}
+請幫我完成以下 YouTube 上傳任務：
 
-每份包含：
-- 完整說明文（依平台長度調整）
-- 短說明（60字以內）
-- Hashtag（8-12個）
-- 留言置頂CTA（引導使用工具）
+步驟一：確認已安裝套件
+pip install google-auth google-auth-oauthlib google-api-python-client
 
-風格差異：
-YouTube→深度完整，FB→親切分享感，IG→簡潔有感，TikTok→年輕口語`;
+步驟二：建立並執行 upload_yt.py
 
-  const result = await callClaude(prompt);
+\`\`\`python
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
+from google.oauth2.credentials import Credentials
+import json, os
 
-  const el = document.getElementById('t4_platforms_output');
-  el.innerHTML = `
-    <div class="output-section">
-      <div class="output-section-header">
-        <div class="output-section-title">📣 多平台發文文案</div>
-        <button class="copy-btn" onclick="copyOutput('t4_copy_target')">複製全部</button>
-      </div>
-      <div class="output-content" id="t4_copy_target">${result}</div>
-    </div>`;
+VIDEO_FILE = "${file}"
+TITLE = "${title}"
+DESCRIPTION = """${fullDesc}"""
+TAGS = ${JSON.stringify(tags.split(',').map(t=>t.trim()))}
+CATEGORY_ID = "26"
+PRIVACY = "${priv}"
+${time?`PUBLISH_AT = "${new Date(time).toISOString()}"`:''} 
 
-  document.getElementById('t4_notebook').textContent =
-`請執行任務四【多平台發文輔助】
-平台：${platforms.join('、')}
-調性：${tone}
-摘要：${summary}
-請補充：①最適合這個主題的熱門標籤 ②同主題的競品影片標題參考 ③本週最佳發文時段建議`;
+def upload():
+    with open('yt_token.json') as f:
+        creds = Credentials.from_authorized_user_info(json.load(f))
+    yt = build('youtube', 'v3', credentials=creds)
+    body = {
+        'snippet': {'title': TITLE, 'description': DESCRIPTION, 'tags': TAGS, 'categoryId': CATEGORY_ID},
+        'status': {'privacyStatus': PRIVACY${time?", 'publishAt': PUBLISH_AT":''}}
+    }
+    media = MediaFileUpload(VIDEO_FILE, chunksize=-1, resumable=True)
+    r = yt.videos().insert(part='snippet,status', body=body, media_body=media).execute()
+    print(f"✅ 成功！https://youtube.com/watch?v={r['id']}")
+
+upload()
+\`\`\`
+
+⚠️ 首次需完成 OAuth2 授權：
+Google Cloud Console → 啟用 YouTube Data API v3 → 下載 credentials.json → 執行授權取得 yt_token.json`;
+    document.getElementById('pub_yt_b').style.display='';
+  }
+  if(plats.includes('YouTube Shorts')){
+    document.getElementById('pub_yts').textContent=`# YouTube Shorts 上傳指令
+# Shorts 使用相同 API，標題加 #Shorts 即可
+
+影片：${file}
+標題：${title} #Shorts
+說明：${desc}\n\n#Shorts #親子教養 #正向教養 #小天使笑長\n工具：${toolUrl}
+格式要求：9:16直式，60秒以內
+
+執行步驟同長片上傳，PRIVACY="${priv}"
+YouTube 會自動識別為 Shorts 格式。`;
+    document.getElementById('pub_yts_b').style.display='';
+  }
+  if(plats.includes('Facebook')){
+    document.getElementById('pub_fb').textContent=`# Facebook 影片發布指令
+
+請幫我執行 Facebook 粉專影片發布：
+
+\`\`\`python
+import requests, os
+
+PAGE_ID = "你的粉絲專頁ID"
+TOKEN = "你的 Meta Graph API Page Access Token"
+VIDEO = "${file}"
+TITLE = "${title}"
+DESC = """${fullDesc}"""
+
+def post_fb():
+    size = os.path.getsize(VIDEO)
+    # 初始化上傳
+    r = requests.post(
+        f"https://graph.facebook.com/v18.0/{PAGE_ID}/videos",
+        data={'upload_phase':'start','file_size':size,'access_token':TOKEN}
+    ).json()
+    sid = r['upload_session_id']
+    
+    # 上傳影片
+    with open(VIDEO,'rb') as f:
+        requests.post(
+            f"https://graph.facebook.com/v18.0/{PAGE_ID}/videos",
+            data={'upload_phase':'transfer','upload_session_id':sid,'start_offset':0,'access_token':TOKEN},
+            files={'video_file_chunk':f}
+        )
+    
+    # 發布
+    r2 = requests.post(
+        f"https://graph.facebook.com/v18.0/{PAGE_ID}/videos",
+        data={'upload_phase':'finish','upload_session_id':sid,'title':TITLE,'description':DESC,'access_token':TOKEN,'published':True}
+    ).json()
+    print(f"✅ Facebook 發布成功！ID：{r2.get('id')}")
+
+post_fb()
+\`\`\`
+
+⚠️ Token 申請：Meta for Developers → 建立App → 申請 pages_manage_posts 權限 → 產生永久 Page Access Token`;
+    document.getElementById('pub_fb_b').style.display='';
+  }
+  if(plats.includes('Instagram Reels')){
+    document.getElementById('pub_ig').textContent=`# Instagram Reels 發布指令
+
+請幫我執行 Instagram Reels 發布：
+
+\`\`\`python
+import requests, time
+
+IG_ID = "你的 IG 帳號 Business ID"
+TOKEN = "你的 Meta Graph API Token"
+VIDEO_URL = "（請先將影片上傳到公開位置，如 Google Drive 公開連結）"
+CAPTION = """${desc}
+
+🛠️ 工具：${toolUrl}
+
+#親子教養 #正向教養 #小天使笑長 #腦科學 #情緒管理"""
+
+def post_ig():
+    # 建立容器
+    r = requests.post(
+        f"https://graph.facebook.com/v18.0/{IG_ID}/media",
+        data={'media_type':'REELS','video_url':VIDEO_URL,'caption':CAPTION,'share_to_feed':True,'access_token':TOKEN}
+    ).json()
+    cid = r['id']
+    print(f"容器建立：{cid}，等待處理...")
+    time.sleep(30)
+    
+    # 發布
+    r2 = requests.post(
+        f"https://graph.facebook.com/v18.0/{IG_ID}/media_publish",
+        data={'creation_id':cid,'access_token':TOKEN}
+    ).json()
+    print(f"✅ IG Reels 發布成功！ID：{r2.get('id')}")
+
+post_ig()
+\`\`\`
+
+⚠️ 注意：IG API 需要公開影片 URL，無法直接上傳本機檔案
+建議流程：本機 → Google Drive公開 → 取得直連URL → 呼叫API`;
+    document.getElementById('pub_ig_b').style.display='';
+  }
+  if(plats.includes('TikTok')){
+    document.getElementById('pub_tt').textContent=`# TikTok 影片發布指令
+
+請幫我執行 TikTok 影片上傳：
+
+\`\`\`python
+import requests, os
+
+ACCESS_TOKEN = "你的 TikTok Access Token"
+VIDEO = "${file}"
+CAPTION = "${title} #親子教養 #正向教養 #小天使笑長 #幸福教養"
+
+def post_tt():
+    size = os.path.getsize(VIDEO)
+    headers = {'Authorization':f'Bearer {ACCESS_TOKEN}','Content-Type':'application/json'}
+    
+    # 初始化
+    r = requests.post(
+        "https://open.tiktokapis.com/v2/post/publish/video/init/",
+        headers=headers,
+        json={
+            'post_info':{'title':CAPTION[:150],'privacy_level':'PUBLIC_TO_EVERYONE','disable_duet':False,'disable_comment':False,'disable_stitch':False},
+            'source_info':{'source':'FILE_UPLOAD','video_size':size,'chunk_size':size,'total_chunk_count':1}
+        }
+    ).json()
+    
+    upload_url = r['data']['upload_url']
+    pid = r['data']['publish_id']
+    
+    # 上傳
+    with open(VIDEO,'rb') as f:
+        requests.put(
+            upload_url,
+            headers={'Content-Range':f'bytes 0-{size-1}/{size}','Content-Type':'video/mp4'},
+            data=f
+        )
+    print(f"✅ TikTok 上傳完成！Publish ID：{pid}")
+    print("影片審核中，5-10分鐘後發布")
+
+post_tt()
+\`\`\`
+
+⚠️ API 申請：TikTok for Developers → 建立App → 申請 video.publish 權限 → 完成審核取得 Access Token`;
+    document.getElementById('pub_tt_b').style.display='';
+  }
+  document.getElementById('pub_out').classList.add('on');
 }
 
-// ─── 任務五 ───
-async function runTask5() {
-  const type = document.getElementById('t5_type').value;
-  const audience = document.getElementById('t5_audience').value;
-  const goal = document.getElementById('t5_goal').value || '讓家長學會先穩住自己的情緒';
-  const stories = getSelectedStories('t5_story_grid');
-  const storyList = stories.map(s => `・${s.title}`).join('\n') || '・（請選擇故事素材）';
-
-  const planPrompt = `
-你是「小天使笑長」課程規劃師，25年國小教師，融合腦神經科學×心理學×正向教養。
-
-【課程類型】${type}
-【目標受眾】${audience}
-【核心目標】${goal}
-【核心故事素材】${storyList}
-
-請生成完整課程架構：
-
-## 課程總覽
-（名稱、目標、適合對象、課程特色）
-
-## 核心能力架構
-（3-4個核心能力，每個2-3句說明）
-
-## 單元架構
-（依類型展開：12週課程→每週主題；工作坊→時間軸；講題→大綱）
-
-## 每單元包含
-・主題故事：（對應故事名）
-・核心概念：（腦科學/心理學）
-・家長練習：（一個可帶回家的方法）
-・工具推薦：（對應PWA工具）`;
-
-  const topicsPrompt = `
-基於以下課程規劃，生成完整的講題列表：
-類型：${type}
-目標：${goal}
-素材：${storyList}
-
-格式（每個講題）：
-講題X：[標題]
-核心問句：（讓家長心裡一動的問題）
-金句：（這個講題的代表金句）
-腦科學鉤子：（一個引發好奇的知識點）
-故事對應：（對應哪個笑長故事）`;
-
-  const [plan, topics] = await Promise.all([
-    callClaude(planPrompt),
-    callClaude(topicsPrompt),
-  ]);
-
-  document.getElementById('t5_plan').textContent = plan;
-  document.getElementById('t5_topics').textContent = topics;
-
-  document.getElementById('t5_notebook').textContent =
-`請執行任務五【課程開發輔助】
-類型：${type} | 受眾：${audience}
-目標：${goal}
-素材：${storyList}
-請從知識庫補充：①各單元對應的心理學理論完整說明 ②可引用的研究數據 ③與其他親職教育課程的差異化優勢`;
-}
+// INIT
+switchSheet('stories_db',document.querySelector('#sheet_tabs .chip.on'));
 </script>
 </body>
 </html>
